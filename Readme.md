@@ -7,7 +7,7 @@ Go to [plugin](build/idea-sandbox/plugins/MapStructPlugin/lib) to download jar f
 Click *Ctrl+Alt+s* shortcut on Intellij IDE to go plugins.
 Go to *install from disk* options.
 Import the downloaded  jar from disk. <br>
-![to.png](to.png "to")
+![to](to.png "to")
 
 ### How to Use The Plugin
 - Select the xml code.
