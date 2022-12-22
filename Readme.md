@@ -2,7 +2,7 @@
 # MapStruct Plugin
 
 ### About
-  As we all know mapstruct  library can generate bean mapper classes automatically.This plugin helps in generating code for mapstruct <br>
+  As we all know mapstruct  library can generate bean mapper classes automatically.This plugin helps in generating code for mapstruct
 that need to be placed above the conversion methods declared in mapper interface.<br>
 
 ### steps to add this plugin to ur ide
