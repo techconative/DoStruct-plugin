@@ -2,23 +2,7 @@
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-!build/idea-sandbox/plugins/MapStructPlugin/lib/MapStructPlugin-1.0-SNAPSHOT.jar
-build/classes
-build/libsSearchableOptions
-build/listProductsReleases.txt
-build/searchableOptions
-build/libs
-build/patchedPluginXmlFiles
-!build/idea-sandbox/plugins
-build/idea-sandbox/plugins-test
-build/idea-sandbox/system
-build/idea-sandbox/config
-build/idea-sandbox/config-test
-build/tmp
-gradlew
-gradlew.bat
-build/**/**/*.xml
-
+build/**
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
