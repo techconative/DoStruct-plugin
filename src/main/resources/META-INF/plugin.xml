@@ -29,7 +29,7 @@
   </extensions>
 
   <actions>
-      <action id="org.techconative.actions.MapStructPlugin" class="org.techconative.actions.MapStructPlugin"
+      <action id="com.techconative.actions.MapStructPlugin" class="com.techconative.actions.MapStructPlugin"
               text="MapStructPlugin" description="MapStructPlugin Description">
           <add-to-group group-id="CodeCompletionGroup" anchor="last"/>
           <keyboard-shortcut keymap="$default" first-keystroke="shift BACK_QUOTE"/>

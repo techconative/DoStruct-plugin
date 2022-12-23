@@ -15,30 +15,30 @@ Import the downloaded  jar from disk. <br>
 - Select the xml code.
 - press *Shift + `* shortcut On Xml , then code generated is on your clipboard.
 
-> Note : works for following  xml Structure only  . Replace *?* and *classname*  accordingly.
+> Note : works for following  xml Structure only  . Replace *source*, *destination* and *classname*  accordingly.
 
 ```xml
 <mapping>
 <class-a> classname </class-a>
 <class-b> classname </class-b>
 <field>
-<a>?</a>
-<b>?</b>
+<a>source 1</a>
+<b>destination 1</b>
 </field>
 .... //any number of fields
 <field>
-<a>?</a>
-<b>?</b>
+<a>source n</a>
+<b>destination n</b>
 </field>  
 
 <field-exclude>
-<a>?</a>
-<b>?</b>
+<a>source 1</a>
+<b>destination 1</b>
 </field-exclude>
 .... //any number of field-excludes
 <field-exclude>
-<a>?</a>
-<b>?</b>
+<a>source n</a>
+<b>destination n</b>
 </field-exclude>  
 </mapping>
 ```

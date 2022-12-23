@@ -1,4 +1,4 @@
-package org.techconative.actions;
+package com.techconative.actions;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -26,19 +26,8 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class MapStructPlugin extends AnAction {
-
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-
-        Thread currentThread = Thread.currentThread();
-        ClassLoader originalClassLoader = currentThread.getContextClassLoader();
-        ClassLoader pluginClassLoader = this.getClass().getClassLoader();
-        try {
-            currentThread.setContextClassLoader(pluginClassLoader);
-            // code working with ServiceLoader here
-        } finally {
-            currentThread.setContextClassLoader(originalClassLoader);
-        }
 
         Editor ediTorRequiredData = e.getRequiredData(CommonDataKeys.EDITOR);
         CaretModel caretModel = ediTorRequiredData.getCaretModel();
@@ -54,8 +43,9 @@ public class MapStructPlugin extends AnAction {
         Document document = null;
         try {
             document = dBuilder.parse(new InputSource(new StringReader(selectedText)));
-        } catch (SAXException | IOException ex) {
-            throw new RuntimeException(ex);
+        } catch (SAXException | IOException | NullPointerException ex) {
+            copyToClipboard(" ");
+            return;
         }
         document.getDocumentElement().normalize();
         Element root = document.getDocumentElement();
@@ -71,11 +61,11 @@ public class MapStructPlugin extends AnAction {
             /* Name of the Class on class-b tag */
             String class_b = document.getElementsByTagName("class-b").item(0).getTextContent();
 
-            String[] ClassB_Array = class_b.split("[.]");
-            String[] ClassA_Array = class_a.split("[.]");
-            String ClassB_Name = ClassB_Array[ClassB_Array.length - 1];
-            String ClassA_Name = ClassA_Array[ClassA_Array.length - 1];
-            String str5 = String.valueOf(ClassA_Name.charAt(0)).toLowerCase() + ClassA_Name.substring(1);
+            String[] ClassBArray = class_b.split("[.]");
+            String[] ClassAArray = class_a.split("[.]");
+            String ClassBName = ClassBArray[ClassBArray.length - 1];
+            String ClassAName = ClassAArray[ClassAArray.length - 1];
+            String str5 = String.valueOf(ClassAName.charAt(0)).toLowerCase() + ClassAName.substring(1);
 
             /* Mapping for field tags */
             NodeList fieldList = document.getElementsByTagName("field");
@@ -97,19 +87,25 @@ public class MapStructPlugin extends AnAction {
                     .map(x -> (Element) x).forEach(y ->
                             attributelist.add("@Mapping(target = \"" + y.getElementsByTagName("b").item(0).getTextContent()
                                     + "\", ignore = \"true\")"));
-            //remove line separator for last element
-            attributelist.set(attributelist.size() - 1, attributelist.get(attributelist.size() - 1).replace("[/t]", ""));
 
-            String mappings = "@Mappings({" + String.join("," + System.lineSeparator(), attributelist) + "})" + System.lineSeparator()
-                    + "protected abstract " + ClassB_Name + String.format(" to%s(%s %s", ClassB_Name, ClassA_Name, str5) + ");";
+            /* remove line separator for last element */
+            attributelist.set(attributelist.size() - 1, attributelist.get(attributelist.size() - 1)
+                    .replace("[/t]", ""));
 
+            String mappings = "@Mappings({" + String.join("," + System.lineSeparator(), attributelist) + "})"
+                    + System.lineSeparator() + "protected abstract " + ClassBName
+                    + String.format(" to%s(%s %s", ClassBName, ClassAName, str5) + ");";
 
-            StringSelection stringSelection = new StringSelection(mappings);
-            Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(stringSelection, null);
+            copyToClipboard(mappings);
 
         }
 
+    }
+
+    void copyToClipboard(String mappings) {
+        StringSelection stringSelection = new StringSelection(mappings);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
     }
 
 }
