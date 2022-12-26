@@ -26,22 +26,22 @@ class MapStructPluginTest {
         actionPerform();
     }
 
-@Test
+    @Test
     public static void actionPerform() throws IOException, UnsupportedFlavorException {
         String xml = "<mapping type=\"one-way\">\n" +
-                "    <class-a>tv.nativ.mio.enterprise.identity.SubAccount</class-a>\n" +
-                "    <class-b>tv.nativ.mio.api.model.account.Account</class-b>\n" +
+                "    <class-a>com.tech.sample.ClassA</class-a>\n" +
+                "    <class-b>com.tech.sample.ClassB</class-b>\n" +
                 "    <field>\n" +
-                "      <a>mioObject.deleted</a>\n" +
-                "      <b>deleted</b>\n" +
+                "      <a>Field1</a>\n" +
+                "      <b>Field1.2</b>\n" +
                 "    </field>\n" +
                 "    <field>\n" +
-                "      <a>mioObject.revision</a>\n" +
-                "      <b>revision</b>\n" +
+                "      <a>Field2</a>\n" +
+                "      <b>Field2.2</b>\n" +
                 "    </field>\n" +
                 "    <field-exclude>\n" +
-                "      <a>locked</a>\n" +
-                "      <b>locked</b>\n" +
+                "      <a>Field3</a>\n" +
+                "      <b>Field3.3</b>\n" +
                 "    </field-exclude>\n" +
                 "  </mapping>";
         actionEvent = mock(AnActionEvent.class);
@@ -53,10 +53,10 @@ class MapStructPluginTest {
         when(editor.getCaretModel()).thenReturn(caretModel);
         when(caretModel.getCurrentCaret()).thenReturn(caret);
         when(caret.getSelectedText()).thenReturn(xml);
-        String expected = "@Mappings({@Mapping(source=\"mioObject.deleted\",target = \"deleted\"),\n" +
-                "@Mapping(source=\"mioObject.revision\",target = \"revision\"),\n" +
-                "@Mapping(target = \"locked\", ignore = \"true\")})\n" +
-                "protected abstract Account toAccount(SubAccount subAccount);";
+        String expected = "@Mappings({@Mapping(source=\"Field1\",target = \"Field1.2\"),\n" +
+                "@Mapping(source=\"Field2\",target = \"Field2.2\"),\n" +
+                "@Mapping(target = \"Field3.3\", ignore = true)})\n" +
+                "public abstract ClassB toClassB(ClassA classA);";
         mapStructPlugin.actionPerformed(actionEvent);
         String data = (String) Toolkit.getDefaultToolkit()
                 .getSystemClipboard().getData(DataFlavor.stringFlavor);

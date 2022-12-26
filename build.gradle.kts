@@ -25,6 +25,12 @@ dependencies{
   testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.9.1")
   testRuntimeOnly("org.junit.vintage:junit-vintage-engine:5.7.2")
   testImplementation("io.kotlintest:kotlintest-runner-junit5:3.1.9")
+  // https://mvnrepository.com/artifact/com.squareup/javapoet
+  implementation("com.squareup:javapoet:1.9.0")
+  // https://mvnrepository.com/artifact/org.mapstruct/mapstruct
+  implementation("org.mapstruct:mapstruct:1.5.3.Final")
+
+
 }
 
 tasks.test {
