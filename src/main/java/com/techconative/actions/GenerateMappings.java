@@ -1,5 +1,8 @@
 package com.techconative.actions;
 
+import com.squareup.javapoet.AnnotationSpec;
+import com.squareup.javapoet.MethodSpec;
+import org.mapstruct.Mapping;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -16,14 +19,20 @@ import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.IntStream;
 
 public class GenerateMappings {
     static String ClassBName;
     static String ClassAName;
-    static  List<String> attributelist;
-    static String mappings;
+    static String classA, classB;
+    static String packageA, packageB;
+    static boolean twoWay = false;
+    static  NodeList excludeList, fieldList;
+    static Map<String, List<String>> nodeMap = new HashMap<>();
+
     static Void generateMappings(String selectedText) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
@@ -40,61 +49,81 @@ public class GenerateMappings {
             return null;
         }
         document.getDocumentElement().normalize();
-        Element root = document.getDocumentElement();
 
+        int length = document.getElementsByTagName("mapping").getLength();
+        if (length != document.getElementsByTagName("class-a").getLength() && length != document.getElementsByTagName("class-b").getLength())
+            return null;
 
-        if (root.getNodeName().equals("mapping")) {
+        for (int i = 0; i < length; i++) {
+            NodeList nodeList = document.getElementsByTagName("mapping").item(i).getChildNodes();
 
-            attributelist = new ArrayList<>();
-
-            /* Name of the Class on class-a tag */
-            String class_a = document.getElementsByTagName("class-a").item(0).getTextContent();
-
-            /* Name of the Class on class-b tag */
-            String class_b = document.getElementsByTagName("class-b").item(0).getTextContent();
-
-            String[] ClassBArray = class_b.split("[.]");
-            String[] ClassAArray = class_a.split("[.]");
-            ClassBName = ClassBArray[ClassBArray.length - 1];
-            ClassAName = ClassAArray[ClassAArray.length - 1];
-            String str5 = String.valueOf(ClassAName.charAt(0)).toLowerCase() + ClassAName.substring(1);
-
-            /* Mapping for field tags */
-            NodeList fieldList = document.getElementsByTagName("field");
-
-            IntStream.range(0, fieldList.getLength())
-                    .mapToObj(fieldList::item)
-                    .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
-                    .map(x -> (Element) x).forEach(y ->
-                            attributelist.add("@Mapping(source=\"" + y.getElementsByTagName("a").item(0).getTextContent()
-                                    + "\",target = \"" + y.getElementsByTagName("b").item(0).getTextContent() + "\")")
+            IntStream.range(0, nodeList.getLength())
+                    .mapToObj(nodeList::item)
+                    .forEach(y -> {
+                                if (y.getNodeName().equals("class-a")){
+                                    nodeMap.put("class-a",List.of(y.getTextContent())) ;}
+                                else if (y.getNodeName().equals("class-b")){
+                                    nodeMap.put("class-b",List.of(y.getTextContent()));}
+                            }
                     );
-
-            /* Mapping for field-exclude tags */
-            NodeList excludeList = document.getElementsByTagName("field-exclude");
-
-            IntStream.range(0, excludeList.getLength())
-                    .mapToObj(excludeList::item)
-                    .filter(node -> node.getNodeType() == Node.ELEMENT_NODE)
-                    .map(x -> (Element) x).forEach(y ->
-                            attributelist.add("@Mapping(target = \"" + y.getElementsByTagName("b").item(0).getTextContent()
-                                    + "\", ignore = true)"));
-
-            /* remove line separator for last element */
-            attributelist.set(attributelist.size() - 1, attributelist.get(attributelist.size() - 1)
-                    .replace("[/t]", ""));
-
-             mappings = "@Mappings({" + String.join("," + System.lineSeparator(), attributelist) + "})"
-                    + System.lineSeparator() + "public abstract " + ClassBName
-                    + String.format(" to%s(%s %s", ClassBName, ClassAName, str5) + ");";
-
-            copyToClipboard(mappings);
+            initialize(nodeMap.get("class-b").get(0).split("[.]"), nodeMap.get("class-a").get(0).split("[.]"));
+            try {
+                GenerateJavaClass.generate(nodeList);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         return null;
     }
+
+    private static void initialize(String[] ClassBArray, String[] ClassAArray) {
+
+        ClassBName = ClassBArray[ClassBArray.length - 1];
+        ClassAName = ClassAArray[ClassAArray.length - 1];
+
+        packageA = nodeMap.get("class-a").get(0).replace("." + ClassAName, "").trim();
+        packageB = nodeMap.get("class-b").get(0).replace("." + ClassBName, "").trim();
+    }
+
     static void copyToClipboard(String mappings) {
         StringSelection stringSelection = new StringSelection(mappings);
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         clipboard.setContents(stringSelection, null);
+    }
+
+    static MethodSpec.Builder bi(MethodSpec.Builder bi,NodeList fieldList) {
+        IntStream.range(0, fieldList.getLength())
+                .mapToObj(fieldList::item)
+                .filter(node -> node.getNodeName().equals("field"))
+                .map(x -> (Element) x).forEach(y -> {
+                    AnnotationSpec.Builder annotationSpec = AnnotationSpec
+                            .builder(Mapping.class);
+                    if (twoWay){
+                        annotationSpec.addMember("source", "$S", y.getElementsByTagName("b").item(0).getTextContent())
+                                .addMember("target", "$S", y.getElementsByTagName("a").item(0).getTextContent());}
+                    else{
+                        annotationSpec.addMember("source", "$S", y.getElementsByTagName("a").item(0).getTextContent())
+                                .addMember("target", "$S", y.getElementsByTagName("b").item(0).getTextContent());}
+
+                    bi.addAnnotation(annotationSpec.build());
+
+                });
+
+        IntStream.range(0, fieldList.getLength())
+                .mapToObj(fieldList::item)
+                .filter(node -> node.getNodeName().equals("field-exclude"))
+                .map(x -> (Element) x).forEach(y -> {
+                    AnnotationSpec.Builder annotationSpec = AnnotationSpec
+                            .builder(Mapping.class);
+                    if (twoWay){
+                        annotationSpec.addMember("target", "$S", y.getElementsByTagName("a").item(0).getTextContent())
+                                .addMember("ignore", "true");}
+                    else{
+                        annotationSpec.addMember("target", "$S", y.getElementsByTagName("b").item(0).getTextContent())
+                                .addMember("ignore", "true");
+                    bi.addAnnotation(annotationSpec.build());
+                    }
+                });
+        return bi;
     }
 }

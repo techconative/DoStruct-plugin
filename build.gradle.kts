@@ -29,8 +29,10 @@ dependencies{
   implementation("com.squareup:javapoet:1.9.0")
   // https://mvnrepository.com/artifact/org.mapstruct/mapstruct
   implementation("org.mapstruct:mapstruct:1.5.3.Final")
-
-
+// https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor
+  implementation("org.mapstruct:mapstruct-processor:1.5.3.Final")
+// https://mvnrepository.com/artifact/org.springframework/spring-core
+  implementation("org.springframework:spring-core:6.0.3")
 }
 
 tasks.test {
