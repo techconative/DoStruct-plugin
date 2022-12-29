@@ -1,7 +1,7 @@
 plugins {
   id("java")
   id("groovy")
-  id("org.jetbrains.intellij") version "1.9.0"
+  id("org.jetbrains.intellij") version "1.11.0"
 }
 
 group = "com.techconative"
@@ -54,8 +54,8 @@ intellij {
 tasks {
   // Set the JVM compatibility versions
   withType<JavaCompile> {
-    sourceCompatibility = "11"
-    targetCompatibility = "11"
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
   }
 
   patchPluginXml {

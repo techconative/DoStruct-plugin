@@ -5,7 +5,6 @@ import com.squareup.javapoet.MethodSpec;
 import org.mapstruct.Mapping;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -18,22 +17,15 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
 public class GenerateMappings {
-    static String ClassBName;
-    static String ClassAName;
-    static String classA, classB;
-    static String packageA, packageB;
-    static boolean twoWay = false;
-    static  NodeList excludeList, fieldList;
-    static Map<String, List<String>> nodeMap = new HashMap<>();
+    static private Map<String, List<String>> nodeMap = new HashMap<>();
 
-    static Void generateMappings(String selectedText) {
+    static Void generateMappings(String selectedText, String path) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
         try {
@@ -45,7 +37,7 @@ public class GenerateMappings {
         try {
             document = dBuilder.parse(new InputSource(new StringReader(selectedText)));
         } catch (SAXException | IOException | NullPointerException ex) {
-            copyToClipboard(" ");
+            Utilities.copyToClipboard(" ");
             return null;
         }
         document.getDocumentElement().normalize();
@@ -60,50 +52,48 @@ public class GenerateMappings {
             IntStream.range(0, nodeList.getLength())
                     .mapToObj(nodeList::item)
                     .forEach(y -> {
-                                if (y.getNodeName().equals("class-a")){
-                                    nodeMap.put("class-a",List.of(y.getTextContent())) ;}
-                                else if (y.getNodeName().equals("class-b")){
-                                    nodeMap.put("class-b",List.of(y.getTextContent()));}
+                                if (y.getNodeName().equals("class-a")) {
+                                    nodeMap.put("class-a", List.of(y.getTextContent()));
+                                } else if (y.getNodeName().equals("class-b")) {
+                                    nodeMap.put("class-b", List.of(y.getTextContent()));
+                                }
                             }
                     );
-            initialize(nodeMap.get("class-b").get(0).split("[.]"), nodeMap.get("class-a").get(0).split("[.]"));
+            Map<String,String> map=initialize(nodeMap.get("class-b").get(0).split("[.]"),
+                    nodeMap.get("class-a").get(0).split("[.]"));
             try {
-                GenerateJavaClass.generate(nodeList);
-            } catch (IOException e) {
+                MapperClassGeneration.generate(nodeList, path,map);
+            } catch (IOException | ClassNotFoundException e) {
                 throw new RuntimeException(e);
             }
         }
         return null;
     }
 
-    private static void initialize(String[] ClassBArray, String[] ClassAArray) {
+    private static Map<String,String> initialize(String[] ClassBArray, String[] ClassAArray) {
+        Map<String,String> map=Map.of("ClassAName",ClassAArray[ClassAArray.length - 1],
+                "ClassBName",ClassBArray[ClassBArray.length - 1],
+                "packageA",nodeMap.get("class-a").get(0).replace("." + ClassAArray[ClassAArray.length - 1], "").trim(),
+                "packageB",nodeMap.get("class-b").get(0).replace("." + ClassBArray[ClassBArray.length - 1], "").trim());
 
-        ClassBName = ClassBArray[ClassBArray.length - 1];
-        ClassAName = ClassAArray[ClassAArray.length - 1];
-
-        packageA = nodeMap.get("class-a").get(0).replace("." + ClassAName, "").trim();
-        packageB = nodeMap.get("class-b").get(0).replace("." + ClassBName, "").trim();
+        return map;
     }
 
-    static void copyToClipboard(String mappings) {
-        StringSelection stringSelection = new StringSelection(mappings);
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        clipboard.setContents(stringSelection, null);
-    }
 
-    static MethodSpec.Builder bi(MethodSpec.Builder bi,NodeList fieldList) {
+    static MethodSpec.Builder bi(MethodSpec.Builder bi, NodeList fieldList,boolean twoWay) {
         IntStream.range(0, fieldList.getLength())
                 .mapToObj(fieldList::item)
                 .filter(node -> node.getNodeName().equals("field"))
                 .map(x -> (Element) x).forEach(y -> {
                     AnnotationSpec.Builder annotationSpec = AnnotationSpec
                             .builder(Mapping.class);
-                    if (twoWay){
+                    if (twoWay) {
                         annotationSpec.addMember("source", "$S", y.getElementsByTagName("b").item(0).getTextContent())
-                                .addMember("target", "$S", y.getElementsByTagName("a").item(0).getTextContent());}
-                    else{
+                                .addMember("target", "$S", y.getElementsByTagName("a").item(0).getTextContent());
+                    } else {
                         annotationSpec.addMember("source", "$S", y.getElementsByTagName("a").item(0).getTextContent())
-                                .addMember("target", "$S", y.getElementsByTagName("b").item(0).getTextContent());}
+                                .addMember("target", "$S", y.getElementsByTagName("b").item(0).getTextContent());
+                    }
 
                     bi.addAnnotation(annotationSpec.build());
 
@@ -115,14 +105,14 @@ public class GenerateMappings {
                 .map(x -> (Element) x).forEach(y -> {
                     AnnotationSpec.Builder annotationSpec = AnnotationSpec
                             .builder(Mapping.class);
-                    if (twoWay){
+                    if (twoWay) {
                         annotationSpec.addMember("target", "$S", y.getElementsByTagName("a").item(0).getTextContent())
-                                .addMember("ignore", "true");}
-                    else{
+                                .addMember("ignore", "true");
+                    } else {
                         annotationSpec.addMember("target", "$S", y.getElementsByTagName("b").item(0).getTextContent())
                                 .addMember("ignore", "true");
-                    bi.addAnnotation(annotationSpec.build());
                     }
+                    bi.addAnnotation(annotationSpec.build());
                 });
         return bi;
     }

@@ -1,7 +1,5 @@
-package com.techconative.actions;
+package com.techconative.actions.model;
 
-import com.techconative.actions.model.Destination;
-import com.techconative.actions.model.Source;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -18,6 +16,10 @@ public abstract class SourceDestinationMapper {
       source = "description",
       target = "descriptionD"
   )
+  @Mapping(
+      target = "count",
+      ignore = true
+  )
   public abstract Destination toDestination(Source source);
 
   @Mapping(
@@ -27,6 +29,10 @@ public abstract class SourceDestinationMapper {
   @Mapping(
       source = "descriptionD",
       target = "description"
+  )
+  @Mapping(
+      target = "count",
+      ignore = true
   )
   public abstract Source toSource(Destination destination);
 }

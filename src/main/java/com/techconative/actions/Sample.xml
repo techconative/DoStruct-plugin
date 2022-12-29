@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mappings>
+    <mapping type="one-way">
+        <class-a>com.techconative.actions.model.Source</class-a>
+        <class-b>com.techconative.actions.model.Destination</class-b>
+        <field>
+            <a>name</a>
+            <b>nameD</b>
+        </field>
+        <field>
+            <a>description</a>
+            <b>descriptionD</b>
+        </field>
+        <field-exclude>
+            <a>count</a>
+            <b>count</b>
+        </field-exclude>
+    </mapping>
+
+    <mapping type="one-way">
+        <class-a>com.techconative.actions.model.Source2</class-a>
+        <class-b>com.techconative.actions.model.Destination2</class-b>
+        <field>
+            <a>name</a>
+            <b>nameD</b>
+        </field>
+        <field>
+            <a>description</a>
+            <b>descriptionD</b>
+        </field>
+        <field-exclude>
+            <a>count</a>
+            <b>count</b>
+        </field-exclude>
+    </mapping>
+
+    <mapping type="one-way">
+        <class-a>com.techconative.actions.model.Source3</class-a>
+        <class-b>com.techconative.actions.model.Destination3</class-b>
+        <field>
+            <a>name</a>
+            <b>nameD</b>
+        </field>
+        <field>
+            <a>description</a>
+            <b>descriptionD</b>
+        </field>
+        <field-exclude>
+            <a>count</a>
+            <b>count</b>
+        </field-exclude>
+    </mapping>
+</mappings>

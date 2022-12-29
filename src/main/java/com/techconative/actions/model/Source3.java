@@ -1,12 +1,9 @@
 package com.techconative.actions.model;
 
-
-
-public class Source {
+public class Source3 {
     private String name;
     private String description;
     private int count;
-
     public String getName() {
         return name;
     }

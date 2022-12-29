@@ -1,7 +1,8 @@
 package com.techconative.actions.model;
 
 
-public class Destination {
+
+public class Destination2 {
     private String nameD;
     private String descriptionD;
     private int count;
