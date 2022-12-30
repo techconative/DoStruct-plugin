@@ -1,15 +1,16 @@
-package com.techconative.actions;
+package com.techconative.actions.test;
+
+
+import com.techconative.actions.service.GenerateMappings;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-
 
 public class Test {
-    public static void main(String[] args) throws URISyntaxException, IOException, ClassNotFoundException {
+    public static void main(String[] args) throws IOException {
       Test test=new Test();
       test.run();
     }
-    void run() {
+    void run() throws IOException {
         String xml="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<mappings>\n" +
                 "    <mapping type=\"one-way\">\n" +
@@ -63,9 +64,10 @@ public class Test {
                 "        </field-exclude>\n" +
                 "    </mapping>\n" +
                 "</mappings>";
-
-        GenerateMappings.generateMappings(xml,"C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\com\\techconative\\actions\\model");
+        GenerateMappings.generateMappings(xml,"C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\com\\techconative\\actions\\mappers",false);
+        GenerateMappings.generateMappings(xml,"C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\com\\techconative\\actions\\mappers",true);
 
 
     }
+
 }
