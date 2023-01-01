@@ -64,8 +64,8 @@ public class Test {
                 "        </field-exclude>\n" +
                 "    </mapping>\n" +
                 "</mappings>";
-        GenerateMappings.generateMappings(xml,"C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\com\\techconative\\actions\\mappers",false);
-        GenerateMappings.generateMappings(xml,"C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\com\\techconative\\actions\\mappers",true);
+        GenerateMappings.generateMappings(xml,"C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\com\\techconative\\actions\\mappers",false,"HelloWorld","mapper");
+        GenerateMappings.generateMappings(xml,"C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\com\\techconative\\actions\\mappers",true,"HelloWorld","mapper");
 
 
     }

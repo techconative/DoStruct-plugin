@@ -19,7 +19,6 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 class MapStructPluginTest {
-    private static MapStructPlugin mapStructPlugin = new MapStructPlugin();
     private static AnActionEvent actionEvent;
 
     public static void main(String[] args) throws IOException, UnsupportedFlavorException {

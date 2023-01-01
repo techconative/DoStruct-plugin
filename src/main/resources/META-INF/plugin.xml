@@ -29,15 +29,10 @@
   </extensions>
 
   <actions>
-      <action id="com.techconative.actions.MapStructPlugin" class="com.techconative.actions.MapStructPlugin"
-              text="MapStructPlugin" description="MapStructPlugin Description">
-          <add-to-group group-id="CodeCompletionGroup" anchor="last"/>
-          <keyboard-shortcut keymap="$default" first-keystroke="shift BACK_QUOTE"/>
-      </action>
       <action id="com.techconative.actions.DozerTOMapperStructPlugin" class="com.techconative.actions.DozerTOMapperStructPlugin"
               text="DozerTOMapperStructPlugin" description="DozerTOMapperStructPlugin">
           <add-to-group group-id="CodeCompletionGroup" anchor="last"/>
-          <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl BACK_QUOTE"/>
+          <keyboard-shortcut keymap="$default" first-keystroke="shift BACK_QUOTE"/>
       </action>
   </actions>
 </idea-plugin>
