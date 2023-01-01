@@ -24,6 +24,7 @@ public class GenerateMappings {
 
     static private TypeSpec.Builder person;
     static private boolean alreadyExecuted = false;
+    private static Document finalDocument;
 
     public static String generateMappings(String selectedText, String path, boolean generate,String className,String mapperName) throws IOException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -34,7 +35,7 @@ public class GenerateMappings {
         } catch (ParserConfigurationException ex) {
             throw new RuntimeException(ex);
         }
-        Document finalDocument = null;
+         finalDocument = null;
         try {
             finalDocument = dBuilder.parse(new InputSource(new StringReader(selectedText)));
         } catch (SAXException | IOException | NullPointerException ex) {
@@ -52,10 +53,9 @@ public class GenerateMappings {
 
 //        for (int i = 0; i < length; i++) {
            // Document finalDocument = finalDocument;
-        Document finalDocument1 = finalDocument;
         IntStream.range(0, length).forEachOrdered(x-> {
                 map.clear();
-                NodeList nodeList = finalDocument1.getElementsByTagName("mapping").item(x).getChildNodes();
+                NodeList nodeList = finalDocument.getElementsByTagName("mapping").item(x).getChildNodes();
                 List<AnnotationSpec.Builder> annotationSpecList = new ArrayList<>();
 
                 IntStream.range(0, nodeList.getLength())
