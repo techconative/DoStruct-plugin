@@ -1,5 +1,6 @@
 package com.techconative.actions.service;
 
+import com.intellij.openapi.ui.Messages;
 import com.squareup.javapoet.*;
 import com.techconative.actions.utilities.Utilities;
 import org.mapstruct.Mapper;
@@ -35,13 +36,14 @@ public class GenerateMappings {
         try {
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
-            throw new RuntimeException(ex);
+            Messages.showMessageDialog(String.valueOf(ex),"ERROR",Messages.getErrorIcon());
+            return null;
         }
          finalDocument = null;
         try {
             finalDocument = dBuilder.parse(new InputSource(new StringReader(selectedText)));
         } catch (SAXException | IOException | NullPointerException ex) {
-            Utilities.copyToClipboard(" ");
+            Messages.showMessageDialog(String.valueOf(ex),"ERROR",Messages.getErrorIcon());
             return null;
         }
         finalDocument.getDocumentElement().normalize();
@@ -50,6 +52,7 @@ public class GenerateMappings {
 
         if (length != finalDocument.getElementsByTagName("class-a").getLength() &&
                 length != finalDocument.getElementsByTagName("class-b").getLength()){
+            Messages.showMessageDialog("Wrong xml structure","ERROR",Messages.getErrorIcon());
             return null;
         }
 
@@ -145,7 +148,6 @@ public class GenerateMappings {
         TypeSpec typeSpec=person.build();
 
         JavaFile javaFile = JavaFile.builder(strings[1],typeSpec).build();
-        System.out.println(javaFile);
 
         if(generate){
             write(javaFile,strings[0]);

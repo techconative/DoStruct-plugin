@@ -2,11 +2,7 @@ package com.techconative.actions.test;
 
 
 import com.techconative.actions.service.GenerateMappings;
-import com.techconative.actions.utilities.Utilities;
-
 import java.io.IOException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Test {
     public static void main(String[] args) throws IOException {

@@ -7,9 +7,7 @@ import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
-import com.intellij.openapi.util.Pair;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
 import com.techconative.actions.service.GenerateMappings;
@@ -17,20 +15,12 @@ import com.techconative.actions.utilities.Utilities;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.techconative.actions.utilities.Utilities.findAndApply;
 
 
 public class DozerTOMapperStructPlugin extends AnAction {
@@ -40,7 +30,6 @@ public class DozerTOMapperStructPlugin extends AnAction {
         Editor ediTorRequiredData = e.getRequiredData(CommonDataKeys.EDITOR);
         CaretModel caretModel = ediTorRequiredData.getCaretModel();
         String selectedText = caretModel.getCurrentCaret().getSelectedText();
-
 
         FileChooserDescriptor fileChooserDescriptor =
                 new FileChooserDescriptor(false, true, false, false, false, false);
@@ -90,8 +79,8 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
         JLabel label = new JLabel("ClassName:");
         panel.add(label, constraints);
-        JTextField textField = new JTextField(10);
-        textField.setSize(new Dimension(100, 100));
+        JTextField textField = new JTextField(30);
+        textField.setSize(new Dimension(300, 100));
         constraints.gridx = 1;
         constraints.gridy = 0;
         panel.add(textField, constraints);
@@ -119,22 +108,21 @@ public class DozerTOMapperStructPlugin extends AnAction {
         JOptionPane.showConfirmDialog(null, panel, "Input Dialog",
                 JOptionPane.OK_CANCEL_OPTION);
 
-        String value1 = textField.getText();
-        boolean value2 = checkBox.isSelected();
-        String value3 = Utilities.GetVariableNameFromClassName(value1);
+        String className = textField.getText();
+        boolean selected = checkBox.isSelected();
+        String attributeName = Utilities.GetVariableNameFromClassName(className);
 
         try {
-            if (value2) {
-                GenerateMappings.generateMappings(selectedText, path, true, value1, value3);
+            if (selected) {
+                GenerateMappings.generateMappings(selectedText, path, true, className, attributeName);
             } else {
-                getJTextPlane(GenerateMappings.generateMappings(selectedText, path, false, value1, value3));
+                getJTextPlane(GenerateMappings.generateMappings(selectedText, path, false, className, attributeName));
             }
         } catch (IOException | BadLocationException ex) {
-            throw new RuntimeException(ex);
+            Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
         }
 
     }
-
 
 
 }
