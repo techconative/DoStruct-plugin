@@ -4,6 +4,7 @@ import com.squareup.javapoet.*;
 import com.techconative.actions.utilities.Utilities;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GenerateMappings {
@@ -111,7 +113,10 @@ public class GenerateMappings {
                 .methodBuilder("to" + map.get("ClassBName"))
                 .addParameter(classTypeA,Utilities.getObjectNameForClassName(map.get("ClassAName")))
                 .returns(classTypeB).addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
-        annotationSpecList.forEach(x-> method.addAnnotation(x.build()));
+        method.addAnnotation(AnnotationSpec.builder(Mappings.class).addMember("value", "$L",
+                 annotationSpecList.stream().map(AnnotationSpec.Builder::build).map(AnnotationSpec::toString)
+                         .collect(Collectors.joining(","+System.lineSeparator(),"{","}"))).build());
+
         person.addMethod(method.build());
     }
 
