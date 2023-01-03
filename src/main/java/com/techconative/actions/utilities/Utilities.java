@@ -22,6 +22,9 @@ public class Utilities {
     }
 
     public static String GetVariableNameFromClassName(String className) {
+        if(className.equals("className")||className.isBlank()||className.isEmpty()) {
+            return "mapper";
+        }
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(String.valueOf(className.charAt(0)).toUpperCase());
         String finalClassName = className.substring(1);
