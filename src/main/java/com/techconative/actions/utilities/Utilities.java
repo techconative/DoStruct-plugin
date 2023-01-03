@@ -36,7 +36,6 @@ public class Utilities {
 
     public static String findAndApply(String text) {
         if (text.matches("^[a-z]+([A-Z][a-z0-9]+)+")){
-            System.out.println("here");
             return text;
         }
         int ctr = 0 ;
