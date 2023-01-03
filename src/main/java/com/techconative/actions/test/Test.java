@@ -2,11 +2,13 @@ package com.techconative.actions.test;
 
 
 import com.techconative.actions.service.GenerateMappings;
+import com.techconative.actions.utilities.Utilities;
 
 import java.io.IOException;
 
 public class Test {
     public static void main(String[] args) throws IOException {
+        System.out.println(Utilities.findAndApply("FieldMap"));
       Test test=new Test();
       test.run();
     }

@@ -3,10 +3,6 @@ package com.techconative.actions.utilities;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.util.Arrays;
-import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Utilities {
 
@@ -22,63 +18,54 @@ public class Utilities {
     }
 
     public static String GetVariableNameFromClassName(String className) {
-        if(className.equals("className")||className.isBlank()||className.isEmpty()) {
+        if (className.equals("className") || className.isBlank() || className.isEmpty()) {
             return "MAPPER";
         }
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(String.valueOf(className.charAt(0)).toUpperCase());
-        String finalClassName = className.substring(1);
-        Arrays.stream(className.split("[A-Z]"))
-                .forEach(y -> {
-                    if (finalClassName.indexOf(y) > 0)
-                        stringBuilder.append(String.format("_%c%s",
-                                finalClassName.charAt(finalClassName.indexOf(y) - 1), y));
-                    else
-                        stringBuilder.append(String.format("%s", y));
-                });
-
-        return stringBuilder.toString().toUpperCase();
-
+        char[] chars = className.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            String ch = String.valueOf(chars[i]);
+            if (i != 0 && ch.equals(ch.toUpperCase())) {
+                stringBuilder.append("_" + ch);
+            } else {
+                stringBuilder.append(ch.toUpperCase());
+            }
+        }
+        return stringBuilder.toString();
     }
 
     public static String findAndApply(String text) {
-        if (text.matches("^[a-z]+([A-Z][a-z0-9]+)+"))
+        if (text.matches("^[a-z]+([A-Z][a-z0-9]+)+")){
+            System.out.println("here");
             return text;
-        String[] words = text.split("[\\W_]+");
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < words.length; i++) {
-            String word = words[i];
-            if (i == 0) {
-                word = word.isEmpty() ? word : word.toLowerCase();
-            } else {
-                word = word.isEmpty() ? word : Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
-            }
-            builder.append(word);
         }
-        return builder.toString();
+        int ctr = 0 ;
+        int n = text.length( ) ;
+        char ch[ ] = text.toCharArray( ) ;
+        int c = 0 ;
+        for ( int i = 0; i < n; i++ )
+        {
+            if( i == 0 )
+                ch[ i ] = Character.toLowerCase( ch[ i ] ) ;
+            if ( ch[ i ] == ' ' )
+            {
+                ctr++ ;
+                ch[ i + 1 ] = Character.toUpperCase( ch[ i + 1] ) ;
+                continue ;
+            }
+            else
+                ch[ c++ ] = ch[ i ] ;
+        }
+
+        return String.valueOf( ch, 0, n - ctr ).replace("_","")
+                .replace("-","");
 
     }
 
     public static String apply(String text) {
-        if (text.matches("^[a-z]+([A-Z][a-z0-9]+)+"))
-            return text;
-        String[] words = text.split("[\\W_]+");
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < words.length; i++) {
-            String word = words[i];
-            if (i == 0) {
-                word = word.isEmpty() ? word : word.toLowerCase();
-            } else {
-                word = word.isEmpty() ? word : Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
-            }
-            builder.append(word);
-
-
-
-
-        }
-        return String.valueOf(builder.toString().charAt(0)).toUpperCase()+builder.deleteCharAt(0);
-
+        text = findAndApply(text);
+        return String.valueOf(text.charAt(0)).toUpperCase() + text.replaceFirst("" + text.charAt(0), "")
+                .replace("_","").replace("-","");
     }
 
 

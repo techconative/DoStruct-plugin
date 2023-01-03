@@ -12,6 +12,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
 import javax.lang.model.element.Modifier;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -73,8 +74,8 @@ public class GenerateMappings {
                                     map.put("ClassBName", getClassName(y.getTextContent()));
                                     map.put("packageB", getPackage(y.getTextContent()));
                                 } else if (y.getNodeName().equals("field")) {
-                                    if(y.getAttributes().getNamedItem("map-id")!=null){
-                                        map.put("methodMapId",y.getAttributes().getNamedItem("map-id").getTextContent());
+                                    if (y.getAttributes().getNamedItem("map-id") != null) {
+                                        map.put("methodMapId", y.getAttributes().getNamedItem("map-id").getTextContent());
                                     }
                                     Element element = (Element) y;
                                     AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
@@ -95,11 +96,11 @@ public class GenerateMappings {
                     );
 
             buildJavaClass(path, map, className, mapperName);
-            if (finalDocument.getElementsByTagName("mapping").item(x).getAttributes().getNamedItem("map-id")!=null){
-               String mapId=finalDocument.getElementsByTagName("mapping").item(x).getAttributes()
+            if (finalDocument.getElementsByTagName("mapping").item(x).getAttributes().getNamedItem("map-id") != null) {
+                String mapId = finalDocument.getElementsByTagName("mapping").item(x).getAttributes()
                         .getNamedItem("map-id").getTextContent();
-               person.addAnnotation(AnnotationSpec.builder(Named.class)
-                       .addMember("value", "$S",Utilities.apply(mapId)).build());
+                person.addAnnotation(AnnotationSpec.builder(Named.class)
+                        .addMember("value", "$S", Utilities.apply(mapId)).build());
             }
             generateMethod(map, annotationSpecList);
         });
@@ -128,20 +129,20 @@ public class GenerateMappings {
                 .addParameter(classTypeA, Utilities.getObjectNameForClassName(map.get("ClassAName")))
                 .returns(classTypeB).addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
         AnnotationSpec.Builder anno = AnnotationSpec.builder(Mappings.class);
-        IntStream.range(0,annotationSpecList.size()).forEachOrdered(x->
-            anno.addMember("value", "$L",annotationSpecList.get(x))
+        IntStream.range(0, annotationSpecList.size()).forEachOrdered(x ->
+                anno.addMember("value", "$L", annotationSpecList.get(x))
         );
         method.addAnnotation(anno.build());
-        if(map.containsKey("methodMapId")){
+        if (map.containsKey("methodMapId")) {
             method.addAnnotation(AnnotationSpec.builder(Named.class)
-                    .addMember("value", "$S",Utilities.findAndApply(map.get("methodMapId"))).build());
+                    .addMember("value", "$S", Utilities.findAndApply(map.get("methodMapId"))).build());
         }
         person.addMethod(method.build());
     }
 
     static private void buildJavaClass(String path, Map<String, String> map, String className, String mapperName) {
         if (!alreadyExecuted) {
-            if (className.equals("className")||className.isBlank()||className.isEmpty()) {
+            if (className.equals("className") || className.isBlank() || className.isEmpty()) {
                 className = map.get("ClassAName") + map.get("ClassBName");
             }
             String[] strings = getPath(path);
@@ -169,7 +170,7 @@ public class GenerateMappings {
         JavaFile javaFile = JavaFile.builder(strings[1], typeSpec).build();
 
         if (generate) {
-            write(javaFile,strings[0]);
+            write(javaFile, strings[0]);
         }
         String code = String.valueOf(javaFile);
         alreadyExecuted = false;

@@ -13,6 +13,7 @@ import com.intellij.util.ui.JBUI;
 import com.techconative.actions.service.GenerateMappings;
 import com.techconative.actions.utilities.Utilities;
 import org.jetbrains.annotations.NotNull;
+
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -93,7 +94,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
         constraints.gridx = 1;
         constraints.gridy = 1;
-        JCheckBox checkBox = new JCheckBox("(remove tick to just view the generated code)",true);
+        JCheckBox checkBox = new JCheckBox("(remove tick to just view the generated code)", true);
         panel.add(checkBox, constraints);
 
         constraints.gridx = 0;
@@ -108,7 +109,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
         JOptionPane.showConfirmDialog(null, panel, "Input Dialog",
                 JOptionPane.OK_CANCEL_OPTION);
-        String className =  Objects.requireNonNullElse(textField.getText(),"ClassName");
+        String className = Objects.requireNonNullElse(textField.getText(), "ClassName");
         boolean isSelected = checkBox.isSelected();
         String attributeName = Utilities.GetVariableNameFromClassName(className);
 
