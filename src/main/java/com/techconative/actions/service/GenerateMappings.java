@@ -6,12 +6,12 @@ import com.techconative.actions.utilities.Utilities;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import org.mapstruct.Named;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
 import javax.lang.model.element.Modifier;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class GenerateMappings {
@@ -74,6 +73,9 @@ public class GenerateMappings {
                                     map.put("ClassBName", getClassName(y.getTextContent()));
                                     map.put("packageB", getPackage(y.getTextContent()));
                                 } else if (y.getNodeName().equals("field")) {
+                                    if(y.getAttributes().getNamedItem("map-id")!=null){
+                                        map.put("methodMapId",y.getAttributes().getNamedItem("map-id").getTextContent());
+                                    }
                                     Element element = (Element) y;
                                     AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
                                     annotationSpec.addMember("source", "$S",
@@ -93,6 +95,12 @@ public class GenerateMappings {
                     );
 
             buildJavaClass(path, map, className, mapperName);
+            if (finalDocument.getElementsByTagName("mapping").item(x).getAttributes().getNamedItem("map-id")!=null){
+               String mapId=finalDocument.getElementsByTagName("mapping").item(x).getAttributes()
+                        .getNamedItem("map-id").getTextContent();
+               person.addAnnotation(AnnotationSpec.builder(Named.class)
+                       .addMember("value", "$S",Utilities.apply(mapId)).build());
+            }
             generateMethod(map, annotationSpecList);
         });
 
@@ -112,8 +120,8 @@ public class GenerateMappings {
 
     static void generateMethod(Map<String, String> map, List<AnnotationSpec> annotationSpecList) {
 
-        ClassName classTypeB = ClassName.get(map.get("packageA"), map.get("ClassBName"));
-        ClassName classTypeA = ClassName.get(map.get("packageB"), map.get("ClassAName"));
+        ClassName classTypeB = ClassName.get(map.get("packageB"), map.get("ClassBName"));
+        ClassName classTypeA = ClassName.get(map.get("packageA"), map.get("ClassAName"));
 
         MethodSpec.Builder method = MethodSpec
                 .methodBuilder("to" + map.get("ClassBName"))
@@ -124,6 +132,10 @@ public class GenerateMappings {
             anno.addMember("value", "$L",annotationSpecList.get(x))
         );
         method.addAnnotation(anno.build());
+        if(map.containsKey("methodMapId")){
+            method.addAnnotation(AnnotationSpec.builder(Named.class)
+                    .addMember("value", "$S",Utilities.findAndApply(map.get("methodMapId"))).build());
+        }
         person.addMethod(method.build());
     }
 
@@ -157,7 +169,7 @@ public class GenerateMappings {
         JavaFile javaFile = JavaFile.builder(strings[1], typeSpec).build();
 
         if (generate) {
-            write(javaFile, strings[0]);
+            write(javaFile,strings[0]);
         }
         String code = String.valueOf(javaFile);
         alreadyExecuted = false;
@@ -172,6 +184,6 @@ public class GenerateMappings {
     }
 
     static private void write(JavaFile javaFile, String path) throws IOException {
-        javaFile.writeTo(Paths.get(path).normalize());
+        javaFile.writeTo(Paths.get(path));
     }
 }

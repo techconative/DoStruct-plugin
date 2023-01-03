@@ -1,9 +1,10 @@
-package com.techconative.actions.model;
+package com.techconative.actions.model.DAO;
 
-public class Source2 {
+
+public class StudentDAO {
     private String name;
     private String description;
-    private int count;
+    private int age;
     public String getName() {
         return name;
     }
@@ -20,11 +21,11 @@ public class Source2 {
         this.description = description;
     }
 
-    public int getCount() {
-        return count;
+    public int getAge() {
+        return age;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setAge(int age) {
+        this.age = age;
     }
 }

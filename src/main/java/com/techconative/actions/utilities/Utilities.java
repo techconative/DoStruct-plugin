@@ -23,7 +23,7 @@ public class Utilities {
 
     public static String GetVariableNameFromClassName(String className) {
         if(className.equals("className")||className.isBlank()||className.isEmpty()) {
-            return "mapper";
+            return "MAPPER";
         }
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append(String.valueOf(className.charAt(0)).toUpperCase());
@@ -41,20 +41,43 @@ public class Utilities {
 
     }
 
-    public static String findAndApply(String src, String pattern,
-                                    Function<String, String> txr) {
-        Matcher m = Pattern.compile(pattern).matcher(src);
-
-        StringBuilder sb = new StringBuilder();
-        int last = 0;
-
-        while (m.find()) {
-            sb.append(src.substring(last, m.start()));
-            sb.append(txr.apply(m.group(0)));
-            last = m.end();
+    public static String findAndApply(String text) {
+        if (text.matches("^[a-z]+([A-Z][a-z0-9]+)+"))
+            return text;
+        String[] words = text.split("[\\W_]+");
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            if (i == 0) {
+                word = word.isEmpty() ? word : word.toLowerCase();
+            } else {
+                word = word.isEmpty() ? word : Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
+            }
+            builder.append(word);
         }
-        sb.append(src.substring(last));
-      return sb.toString();
+        return builder.toString();
+
+    }
+
+    public static String apply(String text) {
+        if (text.matches("^[a-z]+([A-Z][a-z0-9]+)+"))
+            return text;
+        String[] words = text.split("[\\W_]+");
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            if (i == 0) {
+                word = word.isEmpty() ? word : word.toLowerCase();
+            } else {
+                word = word.isEmpty() ? word : Character.toUpperCase(word.charAt(0)) + word.substring(1).toLowerCase();
+            }
+            builder.append(word);
+
+
+
+
+        }
+        return String.valueOf(builder.toString().charAt(0)).toUpperCase()+builder.deleteCharAt(0);
 
     }
 

@@ -1,11 +1,10 @@
-package com.techconative.actions.model;
+package com.techconative.actions.model.DAO;
 
 
-
-public class Source {
+public class EmployeeDAO {
     private String name;
     private String description;
-    private int count;
+    private int empNo;
 
     public String getName() {
         return name;
@@ -23,11 +22,11 @@ public class Source {
         this.description = description;
     }
 
-    public int getCount() {
-        return count;
+    public int getEmpNo() {
+        return empNo;
     }
 
-    public void setCount(int count) {
-        this.count = count;
+    public void setEmpNo(int empNo) {
+        this.empNo = empNo;
     }
 }
