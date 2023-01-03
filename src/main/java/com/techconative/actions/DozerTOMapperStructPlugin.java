@@ -32,7 +32,8 @@ public class DozerTOMapperStructPlugin extends AnAction {
         String selectedText = caretModel.getCurrentCaret().getSelectedText();
 
         FileChooserDescriptor fileChooserDescriptor =
-                new FileChooserDescriptor(false, true, false, false, false, false);
+                new FileChooserDescriptor(false, true, false,
+                        false, false, false);
         FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
                     JTextPanes(consumer.toNioPath().normalize().toString(), selectedText);
                 }
@@ -109,14 +110,15 @@ public class DozerTOMapperStructPlugin extends AnAction {
                 JOptionPane.OK_CANCEL_OPTION);
 
         String className = textField.getText();
-        boolean selected = checkBox.isSelected();
+        boolean isSelected = checkBox.isSelected();
         String attributeName = Utilities.GetVariableNameFromClassName(className);
 
         try {
-            if (selected) {
+            if (isSelected) {
                 GenerateMappings.generateMappings(selectedText, path, true, className, attributeName);
             } else {
-                getJTextPlane(GenerateMappings.generateMappings(selectedText, path, false, className, attributeName));
+                getJTextPlane(GenerateMappings.generateMappings(selectedText, path,
+                        false, className, attributeName));
             }
         } catch (IOException | BadLocationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());

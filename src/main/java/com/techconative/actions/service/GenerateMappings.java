@@ -29,7 +29,8 @@ public class GenerateMappings {
     static private boolean alreadyExecuted = false;
     private static Document finalDocument;
 
-    public static String generateMappings(String selectedText, String path, boolean generate,String className,String mapperName) throws IOException {
+    public static String generateMappings(String selectedText, String path, boolean generate,
+                                          String className,String mapperName) throws IOException {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         Map<String,String> map=new HashMap<>();
         DocumentBuilder dBuilder = null;
@@ -76,14 +77,16 @@ public class GenerateMappings {
                                     } else if (y.getNodeName().equals("field")) {
                                         Element element = (Element) y;
                                         AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
-                                        annotationSpec.addMember("source", "$S", element.getElementsByTagName("a")
+                                        annotationSpec.addMember("source", "$S",
+                                                element.getElementsByTagName("a")
                                                 .item(0).getTextContent()).addMember("target", "$S",
                                                 element.getElementsByTagName("b").item(0).getTextContent());
                                         annotationSpecList.add(annotationSpec);
                                     } else if (y.getNodeName().equals("field-exclude")) {
                                         Element element = (Element) y;
                                         AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
-                                        annotationSpec.addMember("target", "$S", element.getElementsByTagName("b").item(0)
+                                        annotationSpec.addMember("target", "$S",
+                                                element.getElementsByTagName("b").item(0)
                                                 .getTextContent()).addMember("ignore", "true");
                                         annotationSpecList.add(annotationSpec);
                                     }

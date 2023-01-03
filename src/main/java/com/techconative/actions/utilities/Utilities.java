@@ -11,7 +11,8 @@ import java.util.regex.Pattern;
 public class Utilities {
 
     public static String getObjectNameForClassName(String className) {
-        return className.replaceFirst(String.valueOf(className.charAt(0)), String.valueOf(className.charAt(0)).toLowerCase());
+        return className.replaceFirst(String.valueOf(className.charAt(0)),
+                String.valueOf(className.charAt(0)).toLowerCase());
     }
 
     public static void copyToClipboard(String mappings) {
