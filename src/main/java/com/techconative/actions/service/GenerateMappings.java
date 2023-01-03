@@ -61,7 +61,7 @@ public class GenerateMappings {
         IntStream.range(0, length).forEachOrdered(x -> {
             map.clear();
             NodeList nodeList = finalDocument.getElementsByTagName("mapping").item(x).getChildNodes();
-            List<AnnotationSpec.Builder> annotationSpecList = new ArrayList<>();
+            List<AnnotationSpec> annotationSpecList = new ArrayList<>();
 
             IntStream.range(0, nodeList.getLength())
                     .mapToObj(nodeList::item)
@@ -80,14 +80,14 @@ public class GenerateMappings {
                                             element.getElementsByTagName("a")
                                                     .item(0).getTextContent()).addMember("target", "$S",
                                             element.getElementsByTagName("b").item(0).getTextContent());
-                                    annotationSpecList.add(annotationSpec);
+                                    annotationSpecList.add(annotationSpec.build());
                                 } else if (y.getNodeName().equals("field-exclude")) {
                                     Element element = (Element) y;
                                     AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
                                     annotationSpec.addMember("target", "$S",
                                             element.getElementsByTagName("b").item(0)
                                                     .getTextContent()).addMember("ignore", "true");
-                                    annotationSpecList.add(annotationSpec);
+                                    annotationSpecList.add(annotationSpec.build());
                                 }
                             }
                     );
@@ -110,7 +110,7 @@ public class GenerateMappings {
         return strings[strings.length - 1];
     }
 
-    static void generateMethod(Map<String, String> map, List<AnnotationSpec.Builder> annotationSpecList) {
+    static void generateMethod(Map<String, String> map, List<AnnotationSpec> annotationSpecList) {
 
         ClassName classTypeB = ClassName.get(map.get("packageA"), map.get("ClassBName"));
         ClassName classTypeA = ClassName.get(map.get("packageB"), map.get("ClassAName"));
@@ -119,10 +119,11 @@ public class GenerateMappings {
                 .methodBuilder("to" + map.get("ClassBName"))
                 .addParameter(classTypeA, Utilities.getObjectNameForClassName(map.get("ClassAName")))
                 .returns(classTypeB).addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
-        method.addAnnotation(AnnotationSpec.builder(Mappings.class).addMember("value", "$L",
-                annotationSpecList.stream().map(AnnotationSpec.Builder::build).map(AnnotationSpec::toString)
-                        .collect(Collectors.joining("," + System.lineSeparator(), "{", "}")))
-                .build());
+        AnnotationSpec.Builder anno = AnnotationSpec.builder(Mappings.class);
+        IntStream.range(0,annotationSpecList.size()).forEachOrdered(x->
+            anno.addMember("value", "$L",annotationSpecList.get(x))
+        );
+        method.addAnnotation(anno.build());
         person.addMethod(method.build());
     }
 
