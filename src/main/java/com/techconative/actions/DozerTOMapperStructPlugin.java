@@ -41,7 +41,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
     }
 
     JTextPane getJTextPlane(String code) throws BadLocationException {
-        JFrame frame = new JFrame("MAPPER ABSTRACT CLASS CODE");
+        JFrame frame = new JFrame("GENERATED CODE");
         Container cp = frame.getContentPane();
         JTextPane pane = new JTextPane();
         SimpleAttributeSet set = new SimpleAttributeSet();
@@ -93,7 +93,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
         constraints.gridx = 1;
         constraints.gridy = 1;
-        JCheckBox checkBox = new JCheckBox("(Select it to generate class)");
+        JCheckBox checkBox = new JCheckBox("(remove tick to just view the generated code)",true);
         panel.add(checkBox, constraints);
 
         constraints.gridx = 0;
@@ -108,7 +108,6 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
         JOptionPane.showConfirmDialog(null, panel, "Input Dialog",
                 JOptionPane.OK_CANCEL_OPTION);
-System.out.println("textField.getText()"+textField.getText());
         String className =  Objects.requireNonNullElse(textField.getText(),"ClassName");
         boolean isSelected = checkBox.isSelected();
         String attributeName = Utilities.GetVariableNameFromClassName(className);
