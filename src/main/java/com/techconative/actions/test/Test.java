@@ -4,6 +4,7 @@ package com.techconative.actions.test;
 import com.techconative.actions.service.GenerateMappings;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class Test {
     public static void main(String[] args) throws IOException {
@@ -48,8 +49,8 @@ public class Test {
                 "    </mapping>\n" +
                 "\n" +
                 "</mappings>";
-        GenerateMappings.generateMappings(xml,"C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\com\\techconative\\actions\\mappers",false,"className","mapper");
-        GenerateMappings.generateMappings(xml,"C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\com\\techconative\\actions\\mappers",true,"className","mapper");
+       // GenerateMappings.generateMappings(xml, Paths.get("").toAbsolutePath()+"\\src\\main\\java\\com\\techconative\\actions\\mappers",false,"className","mapper");
+        GenerateMappings.generateMappings(xml,Paths.get("").toAbsolutePath()+"\\src\\main\\java\\com\\techconative\\actions\\mappers",true,"className","mapper");
 
 
     }

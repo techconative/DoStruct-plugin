@@ -14,8 +14,10 @@
        Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
        Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
   <description><![CDATA[
-    Here is my short description for My GenerateMappings plugin.<br>
-    <em>Generate</em>
+    When it comes to modernizing the applications, migrating to Mapstruct from Dozer mapper is a primary part for most
+    of the Java enterprise applications that are running successfully for more than a decade.
+    This Intellij plugin will help us to do the migration faster by generating mapstruct code for the dozer xml.<br>
+    <em>With Love TechConative ❤️</em>
   ]]></description>
 
   <!-- Product and plugin compatibility requirements.

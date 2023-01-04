@@ -178,9 +178,13 @@ public class GenerateMappings {
     }
 
     static private String[] getPath(String path) {
-        String str = path.replace(path.charAt(2), '.');
+        char c='\\';
+        if (path.contains("/")) {
+            c = '/';
+        }
+        String str = path.replace(c, '.');
         String[] strings = str.split("src.main.java.");
-        strings[0] = str.replaceAll("." + strings[1], "").trim().replace('.', path.charAt(2));
+        strings[0] = str.replaceAll("." + strings[1], "").trim().replace( '.',c);
         return strings;
     }
 
