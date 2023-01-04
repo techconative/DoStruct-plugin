@@ -19,7 +19,7 @@ Import the downloaded  jar from disk. <br>
 - Code will be generated at the specified location.
 
 
-![GIF](Documents/Mapstruct.gif "GIF")
+![GIF](Documents/MapStructGIF.gif "GIF")
 
 ## Support
 
