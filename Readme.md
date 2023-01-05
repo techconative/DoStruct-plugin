@@ -15,8 +15,9 @@ Import the downloaded  jar from disk. <br>
 
 ## How to Use The Plugin
 - Select the xml code.
-- press Shift + ` shortcut  and provide the details.
+- press Ctrl + Shift + ` shortcut  and provide the details.
 - Code will be generated at the specified location.
+- Uncheck the checkBok to avoid writing and just view the generated code in pop up.
 
 
 ![GIF](Documents/MapStructGIF.gif "GIF")
