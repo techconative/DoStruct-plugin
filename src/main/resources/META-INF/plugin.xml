@@ -10,13 +10,24 @@
   <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
   <vendor email="info@techconative.com" url="https://www.techconative.com">TechConative</vendor>
 
+    <change-notes>><![CDATA[
+   <b>How to Use The Plugin</b><br>
+
+      - Select the xml code.<br>
+      - press Shift + ` shortcut  and provide the details.<br>
+      - Code will be generated at the specified location.<br>
+      - Can run in any platform independent of OS.
+
+  ]]>
+    </change-notes>
+
   <!-- Description of the plugin displayed on the Plugin Page and IDE Plugin Manager.
        Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
        Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
   <description><![CDATA[
     When it comes to modernizing the applications, migrating to Mapstruct from Dozer mapper is a primary part for most
     of the Java enterprise applications that are running successfully for more than a decade.
-    This Intellij plugin will help us to do the migration faster by generating mapstruct code for the dozer xml.<br>
+    This Intellij plugin will help us to do the migration faster by generating mapstruct code for the dozer xml.<br><br><br>
     <em>With Love TechConative ❤️</em>
   ]]></description>
 
