@@ -19,6 +19,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.IntStream;
@@ -177,14 +178,12 @@ public class GenerateMappings {
         return code;
     }
 
-    static private String[] getPath(String path) {
-        char c='\\';
-        if (path.contains("/")) {
-            c = '/';
-        }
-        String str = path.replace(c, '.');
-        String[] strings = str.split("src.main.java.");
-        strings[0] = str.replaceAll("." + strings[1], "").trim().replace( '.',c);
+    private static String[] getPath(String path) {
+        String fileSeparator = FileSystems.getDefault().getSeparator();
+        String str = path.replace(fileSeparator, ".");
+        String[] strings = new String[2];
+        strings[1] = str.split(".src.main.java.")[1];
+        strings[0] = path.replace(strings[1].replace(".", fileSeparator), "");
         return strings;
     }
 
