@@ -27,12 +27,12 @@
        Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
        Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
   <description><![CDATA[
-    Doing same kinda task, that takes considerable time ,each time will also reduce your productivity.
+    Doing same kinda task, that takes considerable time ,repeatedly may also reduce your productivity.
     Manual conversion of mappings from Dozer xml to mapstruct is one such scenario.
     Do focus on your business logic , we will take care of that boring part.
     Yet a another IDE tool which is gonna save time and increase ur productivity.
-    This Intellij plugin will help us to do the migration faster by generating mapstruct code for the dozer xml in seconds.<br><br><br>
-    <em>With Love TechConative ❤️</em>
+    This Intellij <a href="https://github.com/techconative/DoStruct-plugin">plugin</a> will help us to do the migration faster by generating mapstruct code for the dozer xml in seconds.<br><br><br>
+    <em>With Love <a href="https://techconative.com/">TechConative<a> ❤️</em>
   ]]></description>
 
   <!-- Product and plugin compatibility requirements.
