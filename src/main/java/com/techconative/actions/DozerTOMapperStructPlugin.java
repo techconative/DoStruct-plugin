@@ -31,6 +31,9 @@ public class DozerTOMapperStructPlugin extends AnAction {
         Editor ediTorRequiredData = e.getRequiredData(CommonDataKeys.EDITOR);
         CaretModel caretModel = ediTorRequiredData.getCaretModel();
         String selectedText = caretModel.getCurrentCaret().getSelectedText();
+        if (selectedText == null || selectedText.equals("") || selectedText.equals(" ")) {
+            return;
+        }
 
         FileChooserDescriptor fileChooserDescriptor =
                 new FileChooserDescriptor(false, true, false,
@@ -41,7 +44,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
         );
     }
 
-    JTextPane getJTextPlane(String code) throws BadLocationException {
+    public static JTextPane getJTextPlane(String code) throws BadLocationException {
         JFrame frame = new JFrame("GENERATED CODE");
         Container cp = frame.getContentPane();
         JTextPane pane = new JTextPane();
@@ -117,8 +120,10 @@ public class DozerTOMapperStructPlugin extends AnAction {
             if (isSelected) {
                 GenerateMappings.generateMappings(selectedText, path, true, className, attributeName);
             } else {
-                getJTextPlane(GenerateMappings.generateMappings(selectedText, path,
-                        false, className, attributeName));
+                String code = GenerateMappings.generateMappings(selectedText, path,
+                        false, className, attributeName);
+                if (code != null)
+                    getJTextPlane(code);
             }
         } catch (IOException | BadLocationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());

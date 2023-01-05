@@ -1,14 +1,15 @@
 package com.techconative.actions.test;
 
+import javax.swing.text.BadLocationException;
 import java.io.IOException;
 
 
 public class Test {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, BadLocationException {
       Test test=new Test();
       test.run();
     }
-    void run() throws IOException {
+    void run() throws IOException, BadLocationException {
         String xml="<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
                 "<mappings>\n" +
                 "    <mapping type=\"one-way\" map-id=\"Custom_Map\">\n" +
@@ -47,7 +48,7 @@ public class Test {
                 "\n" +
                 "</mappings>";
        // GenerateMappings.generateMappings(xml, "<GIve complete absolute path>",false,"className","mapper");
-        //GenerateMappings.generateMappings(xml,"<GIve complete absolute path>",true,"className","mapper");
+      //  GenerateMappings.generateMappings(xml,"<GIve complete absolute path>",true,"className","mapper");
     }
 
 }
