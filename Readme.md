@@ -20,7 +20,7 @@ Import the downloaded  jar from disk. <br>
 
 ![imageCheckBox](Documents/imageCheckBox.png "imageCheckBox")
 - Uncheck the checkBok to avoid writing and just view the generated code in pop up.
-- Go to action by pressing (⌘+Shift+A or Ctrl+Shift+A)  and change the shortcut by yourself.
+- If the shortcut is not working, go to action by pressing (`⌘+Shift+A` or `Ctrl+Shift+A`)  and change the shortcut by yourself.
 
 
 ## Support
