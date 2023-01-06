@@ -16,11 +16,11 @@ Import the downloaded  jar from disk. <br>
 ## How to Use The Plugin
 - Select the xml code.
 - press Ctrl + Shift + ` shortcut  and provide the details.
-- Code will be generated at the specified location.
+- Code will be generated at the specified location.<br>
+
+![imageCheckBox](Documents/imageCheckBox.png "imageCheckBox")
 - Uncheck the checkBok to avoid writing and just view the generated code in pop up.
 
-
-![GIF](Documents/MapStructGIF.gif "GIF")
 
 ## Support
 

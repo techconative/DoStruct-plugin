@@ -34,14 +34,31 @@ public class DozerTOMapperStructPlugin extends AnAction {
         if (selectedText == null || selectedText.equals("") || selectedText.equals(" ")) {
             return;
         }
-
-        FileChooserDescriptor fileChooserDescriptor =
-                new FileChooserDescriptor(false, true, false,
-                        false, false, false);
-        FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
-                    JTextPanes(consumer.toNioPath().normalize().toString(), selectedText);
+        if (GenerateMappings.CheckXml(selectedText)){
+            String code = null;
+            try {
+                code = GenerateMappings.generateMappings(selectedText, "path",
+                        false, "className", "attributeName");
+            } catch (IOException | BadLocationException ex) {
+              return;
+            }
+            if (code != null) {
+                try {
+                    getJTextPlane(code);
+                } catch (BadLocationException ex) {
+                    return;
                 }
-        );
+            }
+        }else {
+
+            FileChooserDescriptor fileChooserDescriptor =
+                    new FileChooserDescriptor(false, true, false,
+                            false, false, false);
+            FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
+                        JTextPanes(consumer.toNioPath().normalize().toString(), selectedText);
+                    }
+            );
+        }
     }
 
     public static JTextPane getJTextPlane(String code) throws BadLocationException {

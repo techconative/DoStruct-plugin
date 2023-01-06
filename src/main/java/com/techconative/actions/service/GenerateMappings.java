@@ -32,30 +32,49 @@ public class GenerateMappings {
     static private TypeSpec.Builder person;
     static private boolean alreadyExecuted = false;
     private static Document finalDocument;
+    private static int length;
 
-    public static String generateMappings(String selectedText, String path, boolean generate,
-                                          String className, String mapperName) throws IOException, BadLocationException {
+
+    public static Integer check(String selectedText) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        Map<String, String> map = new HashMap<>();
         DocumentBuilder dBuilder = null;
-        person = null;
-        AtomicBoolean partialMapping = new AtomicBoolean(false);
+        length = 0;
         try {
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
-            return null;
+            return 0;
         }
         finalDocument = null;
         try {
             finalDocument = dBuilder.parse(new InputSource(new StringReader(selectedText)));
         } catch (SAXException | IOException | NullPointerException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
-            return null;
+            return 0;
         }
         finalDocument.getDocumentElement().normalize();
+        return finalDocument.getElementsByTagName("mapping").getLength();
+    }
 
-        int length = finalDocument.getElementsByTagName("mapping").getLength();
+    public static boolean CheckXml(String selectedText) {
+        length = check(selectedText);
+        if (length == 1 && finalDocument.getElementsByTagName("mappings").getLength() == 0) {
+            alreadyExecuted = true;
+            return true;
+        } else {
+            alreadyExecuted = false;
+            return false;
+        }
+    }
+
+    public static String generateMappings(String selectedText, String path, boolean generate,
+                                          String className, String mapperName) throws IOException, BadLocationException {
+        if (length == 0) {
+            return null;
+        }
+        Map<String, String> map = new HashMap<>();
+        person = null;
+        AtomicBoolean partialMapping = new AtomicBoolean(false);
 
         if (length != finalDocument.getElementsByTagName("class-a").getLength() &&
                 length != finalDocument.getElementsByTagName("class-b").getLength()) {
