@@ -7,7 +7,9 @@ import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileChooser.FileChooser;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
 import com.techconative.actions.service.GenerateMappings;
@@ -21,7 +23,11 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 public class DozerTOMapperStructPlugin extends AnAction {
@@ -31,17 +37,41 @@ public class DozerTOMapperStructPlugin extends AnAction {
         Editor ediTorRequiredData = e.getRequiredData(CommonDataKeys.EDITOR);
         CaretModel caretModel = ediTorRequiredData.getCaretModel();
         String selectedText = caretModel.getCurrentCaret().getSelectedText();
-
-        FileChooserDescriptor fileChooserDescriptor =
-                new FileChooserDescriptor(false, true, false,
-                        false, false, false);
-        FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
-                    JTextPanes(consumer.toNioPath().normalize().toString(), selectedText);
+        if (selectedText == null || selectedText.equals("") || selectedText.equals(" ")) {
+            return;
+        }
+        if (GenerateMappings.CheckXml(selectedText)){
+            String code = null;
+            try {
+                code = GenerateMappings.generateMappings(selectedText, "path",
+                        false, "className", "attributeName");
+            } catch (IOException | BadLocationException ex) {
+              return;
+            }
+            if (code != null) {
+                try {
+                    getJTextPlane(code);
+                } catch (BadLocationException ex) {
+                    return;
                 }
-        );
+            }
+        }else {
+
+            FileChooserDescriptor fileChooserDescriptor =
+                    new FileChooserDescriptor(false, true, false,
+                            false, false, false);
+           List<VirtualFile> virtualFiles= Arrays.stream(ProjectRootManager.getInstance(e.getProject()).getContentSourceRoots()).filter(
+                    x->(x.toNioPath().normalize().toString().replace(FileSystems.getDefault().getSeparator(),".").contains("src.main.java"))
+            ).collect(Collectors.toList());
+            fileChooserDescriptor.setRoots(virtualFiles);
+            FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
+                        JTextPanes(consumer.toNioPath().normalize().toString(), selectedText);
+                    }
+            );
+        }
     }
 
-    JTextPane getJTextPlane(String code) throws BadLocationException {
+    public static JTextPane getJTextPlane(String code) throws BadLocationException {
         JFrame frame = new JFrame("GENERATED CODE");
         Container cp = frame.getContentPane();
         JTextPane pane = new JTextPane();
@@ -117,8 +147,10 @@ public class DozerTOMapperStructPlugin extends AnAction {
             if (isSelected) {
                 GenerateMappings.generateMappings(selectedText, path, true, className, attributeName);
             } else {
-                getJTextPlane(GenerateMappings.generateMappings(selectedText, path,
-                        false, className, attributeName));
+                String code = GenerateMappings.generateMappings(selectedText, path,
+                        false, className, attributeName);
+                if (code != null)
+                    getJTextPlane(code);
             }
         } catch (IOException | BadLocationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
