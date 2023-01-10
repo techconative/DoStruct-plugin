@@ -2,6 +2,7 @@ package com.techconative.actions.service;
 
 import com.intellij.openapi.ui.Messages;
 import com.squareup.javapoet.*;
+import com.techconative.actions.DozerTOMapperStructPlugin;
 import com.techconative.actions.utilities.Utilities;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,13 +15,19 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import javax.lang.model.element.Modifier;
+import javax.swing.text.BadLocationException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.file.FileSystems;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
 public class GenerateMappings {
@@ -28,35 +35,55 @@ public class GenerateMappings {
     static private TypeSpec.Builder person;
     static private boolean alreadyExecuted = false;
     private static Document finalDocument;
+    private static int length;
 
-    public static String generateMappings(String selectedText, String path, boolean generate,
-                                          String className, String mapperName) throws IOException {
+
+    public static Integer check(String selectedText) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        Map<String, String> map = new HashMap<>();
         DocumentBuilder dBuilder = null;
+        length = 0;
         try {
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
-            return null;
+            return 0;
         }
         finalDocument = null;
         try {
             finalDocument = dBuilder.parse(new InputSource(new StringReader(selectedText)));
         } catch (SAXException | IOException | NullPointerException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
-            return null;
+            return 0;
         }
         finalDocument.getDocumentElement().normalize();
+        return finalDocument.getElementsByTagName("mapping").getLength();
+    }
 
-        int length = finalDocument.getElementsByTagName("mapping").getLength();
+    public static boolean CheckXml(String selectedText) {
+        length = check(selectedText);
+        if (length == 1 && finalDocument.getElementsByTagName("mappings").getLength() == 0) {
+            alreadyExecuted = true;
+            return true;
+        } else {
+            alreadyExecuted = false;
+            return false;
+        }
+    }
+
+    public static String generateMappings(String selectedText, String path, boolean generate,
+                                          String className, String mapperName) throws IOException, BadLocationException {
+        if (length == 0) {
+            return null;
+        }
+        Map<String, String> map = new HashMap<>();
+        person = null;
+        AtomicBoolean partialMapping = new AtomicBoolean(false);
 
         if (length != finalDocument.getElementsByTagName("class-a").getLength() &&
                 length != finalDocument.getElementsByTagName("class-b").getLength()) {
             Messages.showMessageDialog("Wrong xml structure", "ERROR", Messages.getErrorIcon());
             return null;
         }
-
 
         IntStream.range(0, length).forEachOrdered(x -> {
             map.clear();
@@ -99,13 +126,26 @@ public class GenerateMappings {
             if (finalDocument.getElementsByTagName("mapping").item(x).getAttributes().getNamedItem("map-id") != null) {
                 String mapId = finalDocument.getElementsByTagName("mapping").item(x).getAttributes()
                         .getNamedItem("map-id").getTextContent();
-                person.addAnnotation(AnnotationSpec.builder(Named.class)
-                        .addMember("value", "$S", Utilities.apply(mapId)).build());
+                map.put("methodMapId", mapId);
             }
-            generateMethod(map, annotationSpecList);
+            if (finalDocument.getElementsByTagName("mappings").getLength() == 0 && length >= 1 && !generate) {
+                try {
+                    DozerTOMapperStructPlugin.getJTextPlane(generateMethod(map, annotationSpecList, true)
+                            .replaceAll("@org.mapstruct.", "@"));
+                    partialMapping.set(true);
+                } catch (BadLocationException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                generateMethod(map, annotationSpecList, false);
+            }
         });
-
-        return generateJavaClass(path, generate);
+        if (partialMapping.get()) {
+            alreadyExecuted = false;
+            return null;
+        } else {
+            return generateJavaClass(path, generate);
+        }
     }
 
 
@@ -119,7 +159,7 @@ public class GenerateMappings {
         return strings[strings.length - 1];
     }
 
-    static void generateMethod(Map<String, String> map, List<AnnotationSpec> annotationSpecList) {
+    static String generateMethod(Map<String, String> map, List<AnnotationSpec> annotationSpecList, boolean partialMapping) {
 
         ClassName classTypeB = ClassName.get(map.get("packageB"), map.get("ClassBName"));
         ClassName classTypeA = ClassName.get(map.get("packageA"), map.get("ClassAName"));
@@ -128,16 +168,24 @@ public class GenerateMappings {
                 .methodBuilder("to" + map.get("ClassBName"))
                 .addParameter(classTypeA, Utilities.getObjectNameForClassName(map.get("ClassAName")))
                 .returns(classTypeB).addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT);
-        AnnotationSpec.Builder anno = AnnotationSpec.builder(Mappings.class);
-        IntStream.range(0, annotationSpecList.size()).forEachOrdered(x ->
-                anno.addMember("value", "$L", annotationSpecList.get(x))
-        );
-        method.addAnnotation(anno.build());
+        if (!annotationSpecList.isEmpty() && annotationSpecList != null) {
+            AnnotationSpec.Builder anno = AnnotationSpec.builder(Mappings.class);
+            IntStream.range(0, annotationSpecList.size()).forEachOrdered(x ->
+                    anno.addMember("value", "$L", annotationSpecList.get(x))
+            );
+            method.addAnnotation(anno.build());
+        }
         if (map.containsKey("methodMapId")) {
             method.addAnnotation(AnnotationSpec.builder(Named.class)
                     .addMember("value", "$S", Utilities.findAndApply(map.get("methodMapId"))).build());
         }
-        person.addMethod(method.build());
+        if (partialMapping) {
+            return method.build().toString().replaceAll(map.get("packageB") + ".", "")
+                    .replaceAll(map.get("packageA") + ".", "");
+        } else {
+            person.addMethod(method.build());
+            return null;
+        }
     }
 
     static private void buildJavaClass(String path, Map<String, String> map, String className, String mapperName) {
@@ -177,10 +225,12 @@ public class GenerateMappings {
         return code;
     }
 
-    static private String[] getPath(String path) {
-        String str = path.replace(path.charAt(2), '.');
-        String[] strings = str.split("src.main.java.");
-        strings[0] = str.replaceAll("." + strings[1], "").trim().replace('.', path.charAt(2));
+    private static String[] getPath(String path) {
+        String fileSeparator = FileSystems.getDefault().getSeparator();
+        String str = path.replace(fileSeparator, ".");
+        String[] strings = new String[2];
+        strings[1] = str.split(".src.main.java.")[1];
+        strings[0] = path.replace(strings[1].replace(".", fileSeparator), "");
         return strings;
     }
 
