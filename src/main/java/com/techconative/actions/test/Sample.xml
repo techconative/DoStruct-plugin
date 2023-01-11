@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mappings>
     <mapping type="one-way">
-        <class-a>com.tech.plugins.DAO.EmployeeDAO</class-a>
-        <class-b>com.tech.plugins.DTO.EmployeeDTO</class-b>
-        <field>
-            <a>name</a>
-            <b>empName</b>
-        </field>
-        <field>
-            <a>description</a>
-            <b>empDescription</b>
-        </field>
-        <field-exclude>
-            <a>empNo</a>
-            <b>empNumber</b>
-        </field-exclude>
-    </mapping>
+    <class-a>com.tech.plugins.DAO.EmployeeDAO</class-a>
+    <class-b>com.tech.plugins.DTO.EmployeeDTO</class-b>
+    <field>
+        <a>name</a>
+        <b>empName</b>
+    </field>
+    <field>
+        <a>description</a>
+        <b>empDescription</b>
+    </field>
+    <field-exclude>
+        <a>empNo</a>
+        <b>empNumber</b>
+    </field-exclude>
+</mapping>
 
     <mapping type="one-way">
         <class-a>com.tech.plugins.DAO.StudentDAO</class-a>

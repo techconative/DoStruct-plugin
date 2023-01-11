@@ -10,7 +10,7 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="info@techconative.com" url="https://www.techconative.com">TechConative</vendor>
 
-    <idea-version since-build="223.8214.52"></idea-version>
+    <idea-version since-build="222" until-build="231.*"/>
 
     <change-notes>><![CDATA[
    <b>How to Use The Plugin</b><br>
@@ -18,10 +18,10 @@
       - Select the xml code.<br>
       - press Ctrl + Shift  + ` shortcut  and provide the details.<br>
       - Code will be generated at the specified location.<br>
-      - Can run in any platform independent of OS.
-      - Can just view generated code without writing.
-      - Can get code in pop up for already created class and append the missing part.
-      - you can go to action by pressing (⌘+Shift+A or Ctrl+Shift+A) and type plugin name and change the shortcut yourself.
+      - Can run in any platform independent of OS.<br>
+      - Can just view generated code without writing.<br>
+      - Can get code in pop up for already created class and append the missing part.<br>
+      - you can go to action by pressing (⌘+Shift+A or Ctrl+Shift+A) and type plugin name and change the shortcut yourself.<br>
 
   ]]>
     </change-notes>
@@ -55,7 +55,11 @@
 
     <!-- Product and plugin compatibility requirements.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html -->
-    <depends>com.intellij.modules.platform</depends>
+<!--    <depends>com.intellij.modules.platform</depends>-->
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>com.intellij.java</depends>
+
 
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->

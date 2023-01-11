@@ -2,7 +2,6 @@ plugins {
   id("java")
   id("org.jetbrains.intellij") version "1.11.0"
   application
-  id("com.autonomousapps.dependency-analysis") version "1.18.0"
 }
 
 application {
@@ -31,7 +30,7 @@ dependencies{
 
 tasks {
   val fatJar = register<Jar>("fatJar") {
-    dependsOn.addAll(listOf("compileJava", "compileKotlin", "processResources")) // We need this for Gradle optimization to work
+    dependsOn.addAll(listOf("compileJava")) // , "compileKotlin", "processResources" We need this for Gradle optimization to work
     archiveClassifier.set("standalone") // Naming the jar
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest { attributes(mapOf("Main-Class" to application.mainClass)) } // Provided we set it up in the application plugin configuration
@@ -53,8 +52,7 @@ configurations.all {
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
 intellij {
-  version.set("2022.2")
-  type.set("IU")
+  version.set("2022.3.1")
   type.set("IC") // Target IDE Platform
   plugins.set(listOf("com.intellij.java"))
 }
@@ -68,6 +66,7 @@ tasks {
 
   patchPluginXml {
     sinceBuild.set("222")
+    untilBuild.set("231.*")
   }
 
   signPlugin {
