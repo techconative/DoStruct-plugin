@@ -23,6 +23,14 @@ Import the downloaded  jar from disk. <br>
 - Go to action by pressing (⌘+Shift+A or Ctrl+Shift+A)  and change the shortcut by yourself.
 
 
+
+![menu](Documents/menu.png "menu")
+- Just right click on selected text click on *GenerateMapping*  which appears first on popup menu.
+- Map-id at field levels are added.
+
+
+
+
 ## Support
 
 If you find things to be improved, feel free to make your contributions by raising issues/PRs.

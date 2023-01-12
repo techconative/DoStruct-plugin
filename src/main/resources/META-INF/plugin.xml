@@ -10,6 +10,8 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="info@techconative.com" url="https://www.techconative.com">TechConative</vendor>
 
+    <version>0.0.3</version>
+
     <idea-version since-build="222" until-build="231.*"/>
 
     <change-notes>><![CDATA[
@@ -22,7 +24,14 @@
       - Can just view generated code without writing.<br>
       - Can get code in pop up for already created class and append the missing part.<br>
       - you can go to action by pressing (⌘+Shift+A or Ctrl+Shift+A) and type plugin name
-      and change the shortcut yourself.<br>
+      and change the shortcut yourself.<br><br><br>
+
+
+    <b> Newly added</b><br>
+
+      - Context menu for plugin is added now.<br>
+      - Just right click on selected text click on <i>GenerateMapping</i>  which appears first on popup menu.<br>
+      - Map-id at field levels are added.<br>
 
   ]]>
     </change-notes>

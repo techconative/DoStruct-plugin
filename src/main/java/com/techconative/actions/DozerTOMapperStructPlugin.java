@@ -40,38 +40,42 @@ public class DozerTOMapperStructPlugin extends AnAction {
         if (selectedText == null || selectedText.equals("") || selectedText.equals(" ")) {
             return;
         }
-        if (GenerateMappings.CheckXml(selectedText)){
-            String code = null;
-            try {
-                code = GenerateMappings.generateMappings("path",
-                        false, "className", "attributeName");
-            } catch (IOException | BadLocationException ex) {
-              return;
-            }
-            if (code != null) {
+        try {
+            if (GenerateMappings.CheckXml(selectedText)) {
+                String code = null;
                 try {
-                    getJTextPlane(code);
-                } catch (BadLocationException ex) {
+                    code = GenerateMappings.generateMappings("path",
+                            false, "className", "attributeName");
+                } catch (IOException | BadLocationException ex) {
                     return;
                 }
-            }
-        }else {
-            FileChooserDescriptor fileChooserDescriptor =
-                    new FileChooserDescriptor(false, true, false,
-                            false, false, false);
-            String separator=FileSystems.getDefault().getSeparator();
-           List<VirtualFile> virtualFiles= Arrays.stream(ProjectRootManager.getInstance(e.getProject())
-                   .getContentSourceRoots()).filter(
-                    x->(x.toNioPath().normalize().toString().replace(separator,".")
-                            .replace(separator+separator,".")
-                            .replace("/",".").replace("\\",".")
-                            .replace("..",".").contains("src.main.java"))
-            ).collect(Collectors.toList());
-            fileChooserDescriptor.setRoots(virtualFiles);
-            FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
-                        JTextPanes(consumer.toNioPath().normalize().toString());
+                if (code != null) {
+                    try {
+                        getJTextPlane(code);
+                    } catch (BadLocationException ex) {
+                        return;
                     }
-            );
+                }
+            } else {
+                FileChooserDescriptor fileChooserDescriptor =
+                        new FileChooserDescriptor(false, true, false,
+                                false, false, false);
+                String separator = FileSystems.getDefault().getSeparator();
+                List<VirtualFile> virtualFiles = Arrays.stream(ProjectRootManager.getInstance(e.getProject())
+                        .getContentSourceRoots()).filter(
+                        x -> (x.toNioPath().normalize().toString().replace(separator, ".")
+                                .replace(separator + separator, ".")
+                                .replace("/", ".").replace("\\", ".")
+                                .replace("..", ".").contains("src.main.java"))
+                ).collect(Collectors.toList());
+                fileChooserDescriptor.setRoots(virtualFiles);
+                FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
+                            JTextPanes(consumer.toNioPath().normalize().toString());
+                        }
+                );
+            }
+        }catch (RuntimeException ex){
+            return;
         }
     }
 
@@ -158,6 +162,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
             }
         } catch (IOException | BadLocationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
+            return;
         }
 
     }

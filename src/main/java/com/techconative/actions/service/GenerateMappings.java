@@ -43,14 +43,14 @@ public class GenerateMappings {
             dBuilder = dbFactory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
-            return 0;
+            return -1;
         }
         finalDocument = null;
         try {
             finalDocument = dBuilder.parse(new InputSource(new StringReader(selectedText)));
         } catch (SAXException | IOException | NullPointerException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
-            return 0;
+            return -1;
         }
         finalDocument.getDocumentElement().normalize();
         return finalDocument.getElementsByTagName("mapping").getLength();
@@ -61,7 +61,10 @@ public class GenerateMappings {
         if (length == 1 && finalDocument.getElementsByTagName("mappings").getLength() == 0) {
             alreadyExecuted = true;
             return true;
-        } else {
+        }else if (length == -1){
+            throw new RuntimeException();
+        }
+        else {
             alreadyExecuted = false;
             return false;
         }
