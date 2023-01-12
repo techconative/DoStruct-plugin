@@ -56,7 +56,6 @@ public class DozerTOMapperStructPlugin extends AnAction {
                 }
             }
         }else {
-
             FileChooserDescriptor fileChooserDescriptor =
                     new FileChooserDescriptor(false, true, false,
                             false, false, false);
@@ -65,12 +64,12 @@ public class DozerTOMapperStructPlugin extends AnAction {
                    .getContentSourceRoots()).filter(
                     x->(x.toNioPath().normalize().toString().replace(separator,".")
                             .replace(separator+separator,".")
-                            .replaceAll("/",".").replaceAll("\\",".")
-                            .replaceAll("..",".").contains("src.main.java"))
+                            .replace("/",".").replace("\\",".")
+                            .replace("..",".").contains("src.main.java"))
             ).collect(Collectors.toList());
             fileChooserDescriptor.setRoots(virtualFiles);
             FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
-                        JTextPanes(consumer.toNioPath().normalize().toString(), selectedText);
+                        JTextPanes(consumer.toNioPath().normalize().toString());
                     }
             );
         }
@@ -101,7 +100,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
     }
 
-    void JTextPanes(String path, String selectedText) {
+    void JTextPanes(String path) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.setLayout(new GridBagLayout());
@@ -153,8 +152,9 @@ public class DozerTOMapperStructPlugin extends AnAction {
             } else {
                 String code = GenerateMappings.generateMappings(path,
                         false, className, attributeName);
-                if (code != null)
+                if (code != null){
                     getJTextPlane(code);
+                }
             }
         } catch (IOException | BadLocationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());

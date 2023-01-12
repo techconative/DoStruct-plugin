@@ -21,7 +21,8 @@
       - Can run in any platform independent of OS.<br>
       - Can just view generated code without writing.<br>
       - Can get code in pop up for already created class and append the missing part.<br>
-      - you can go to action by pressing (⌘+Shift+A or Ctrl+Shift+A) and type plugin name and change the shortcut yourself.<br>
+      - you can go to action by pressing (⌘+Shift+A or Ctrl+Shift+A) and type plugin name
+      and change the shortcut yourself.<br>
 
   ]]>
     </change-notes>
@@ -64,13 +65,14 @@
     <!-- Extension points defined by the plugin.
          Read more: https://plugins.jetbrains.com/docs/intellij/plugin-extension-points.html -->
     <extensions defaultExtensionNs="com.intellij">
-
     </extensions>
 
     <actions>
-        <action id="com.techconative.actions.DozerTOMapperStructPlugin" class="com.techconative.actions.DozerTOMapperStructPlugin"
-                text="DozerTOMapperStructPlugin" description="DozerTOMapperStructPlugin">
+        <action id="com.techconative.actions.DozerTOMapperStructPlugin"
+                class="com.techconative.actions.DozerTOMapperStructPlugin" text="GenerateMappings"
+                description="DozerTOMapperStructPlugin">
             <add-to-group group-id="CodeCompletionGroup" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <keyboard-shortcut keymap="$default" first-keystroke="shift ctrl BACK_QUOTE"/>
         </action>
     </actions>
