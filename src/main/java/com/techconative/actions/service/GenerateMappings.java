@@ -23,10 +23,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.IntStream;
 
@@ -38,7 +35,7 @@ public class GenerateMappings {
     private static int length;
 
 
-    public static Integer check(String selectedText) {
+    private static Integer initializeXmlDocumentBuilder(String selectedText) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder = null;
         length = 0;
@@ -60,7 +57,7 @@ public class GenerateMappings {
     }
 
     public static boolean CheckXml(String selectedText) {
-        length = check(selectedText);
+        length = initializeXmlDocumentBuilder(selectedText);
         if (length == 1 && finalDocument.getElementsByTagName("mappings").getLength() == 0) {
             alreadyExecuted = true;
             return true;
@@ -70,7 +67,7 @@ public class GenerateMappings {
         }
     }
 
-    public static String generateMappings(String selectedText, String path, boolean generate,
+    public static String generateMappings(String path, boolean generate,
                                           String className, String mapperName) throws IOException, BadLocationException {
         if (length == 0) {
             return null;
@@ -94,31 +91,38 @@ public class GenerateMappings {
                     .mapToObj(nodeList::item)
                     .forEach(y -> {
 
-                                if (y.getNodeName().equals("class-a")) {
-                                    map.put("ClassAName", getClassName(y.getTextContent()));
-                                    map.put("packageA", getPackage(y.getTextContent()));
-                                } else if (y.getNodeName().equals("class-b")) {
-                                    map.put("ClassBName", getClassName(y.getTextContent()));
-                                    map.put("packageB", getPackage(y.getTextContent()));
-                                } else if (y.getNodeName().equals("field")) {
-                                    if (y.getAttributes().getNamedItem("map-id") != null) {
-                                        map.put("methodMapId", y.getAttributes().getNamedItem("map-id").getTextContent());
-                                    }
-                                    Element element = (Element) y;
-                                    AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
-                                    annotationSpec.addMember("source", "$S",
-                                            element.getElementsByTagName("a")
-                                                    .item(0).getTextContent()).addMember("target", "$S",
-                                            element.getElementsByTagName("b").item(0).getTextContent());
-                                    annotationSpecList.add(annotationSpec.build());
-                                } else if (y.getNodeName().equals("field-exclude")) {
-                                    Element element = (Element) y;
-                                    AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
-                                    annotationSpec.addMember("target", "$S",
-                                            element.getElementsByTagName("b").item(0)
-                                                    .getTextContent()).addMember("ignore", "true");
-                                    annotationSpecList.add(annotationSpec.build());
+                        switch (y.getNodeName()) {
+                            case "class-a" -> {
+                                map.put("ClassAName", getClassName(y.getTextContent()));
+                                map.put("packageA", getPackage(y.getTextContent()));
+                            }
+                            case "class-b" -> {
+                                map.put("ClassBName", getClassName(y.getTextContent()));
+                                map.put("packageB", getPackage(y.getTextContent()));
+                            }
+                            case "field" -> {
+                                Element element = (Element) y;
+                                AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
+                                annotationSpec.addMember("source", "$S",
+                                        element.getElementsByTagName("a")
+                                                .item(0).getTextContent()).addMember("target", "$S",
+                                        element.getElementsByTagName("b").item(0).getTextContent());
+                                if (y.getAttributes().getNamedItem("map-id") != null) {
+                                    annotationSpec.addMember("qualifiedByName","$S",
+                                            Utilities.findAndApply(y.getAttributes().getNamedItem("map-id")
+                                                    .getTextContent()));
                                 }
+                                annotationSpecList.add(annotationSpec.build());
+                            }
+                            case "field-exclude" -> {
+                                Element element = (Element) y;
+                                AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
+                                annotationSpec.addMember("target", "$S",
+                                        element.getElementsByTagName("b").item(0)
+                                                .getTextContent()).addMember("ignore", "true");
+                                annotationSpecList.add(annotationSpec.build());
+                            }
+                        }
                             }
                     );
 

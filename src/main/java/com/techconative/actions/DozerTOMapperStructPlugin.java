@@ -43,7 +43,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
         if (GenerateMappings.CheckXml(selectedText)){
             String code = null;
             try {
-                code = GenerateMappings.generateMappings(selectedText, "path",
+                code = GenerateMappings.generateMappings("path",
                         false, "className", "attributeName");
             } catch (IOException | BadLocationException ex) {
               return;
@@ -60,10 +60,13 @@ public class DozerTOMapperStructPlugin extends AnAction {
             FileChooserDescriptor fileChooserDescriptor =
                     new FileChooserDescriptor(false, true, false,
                             false, false, false);
+            String separator=FileSystems.getDefault().getSeparator();
            List<VirtualFile> virtualFiles= Arrays.stream(ProjectRootManager.getInstance(e.getProject())
                    .getContentSourceRoots()).filter(
-                    x->(x.toNioPath().normalize().toString().replace(FileSystems.getDefault().getSeparator()
-                            ,".").contains("src.main.java"))
+                    x->(x.toNioPath().normalize().toString().replace(separator,".")
+                            .replace(separator+separator,".")
+                            .replaceAll("/",".").replaceAll("\\",".")
+                            .replaceAll("..",".").contains("src.main.java"))
             ).collect(Collectors.toList());
             fileChooserDescriptor.setRoots(virtualFiles);
             FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
@@ -146,9 +149,9 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
         try {
             if (isSelected) {
-                GenerateMappings.generateMappings(selectedText, path, true, className, attributeName);
+                GenerateMappings.generateMappings(path, true, className, attributeName);
             } else {
-                String code = GenerateMappings.generateMappings(selectedText, path,
+                String code = GenerateMappings.generateMappings(path,
                         false, className, attributeName);
                 if (code != null)
                     getJTextPlane(code);
