@@ -24,14 +24,12 @@
       - Can just view generated code without writing.<br>
       - Can get code in pop up for already created class and append the missing part.<br>
       - you can go to action by pressing (⌘+Shift+A or Ctrl+Shift+A) and type plugin name
-      and change the shortcut yourself.<br><br><br>
+      and change the shortcut yourself.<br><br>
 
+    <b>Newly added</b><br>
 
-    <b> Newly added</b><br>
+      - Just right click on selected text and select <i>GenerateMapping</i>  which appears first on popup menu.<br>
 
-      - Context menu for plugin is added now.<br>
-      - Just right click on selected text click on <i>GenerateMapping</i>  which appears first on popup menu.<br>
-      - Map-id at field levels are added.<br>
 
   ]]>
     </change-notes>
@@ -52,11 +50,17 @@
     <ul>
     <li>Straight forward mapping definitions with fields and ignore fields.</li>
     <li>MapId.</li>
-    </ul>
+    <li>Map-id at field levels are added.</li>
+    </ul> <br>
 
+    Newly added,<br>
+     <ul>
+    <li>Map-id at field levels are added.</li>
+    <li>Context menu for plugin is added now.</li>
+    <li>Just right click on selected text and select <i>GenerateMapping</i> which appears first on popup menu.</li>
+    </ul><br>
 
     We'll be covering more cases of mapping in upcoming releases.
-
 
     Feel free to contribute to the <a href="https://github.com/techconative/DoStruct-plugin/tree/bugFix">source code</a>
 
