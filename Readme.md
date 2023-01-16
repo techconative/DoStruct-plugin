@@ -6,6 +6,10 @@ When it comes to modernizing the applications, migrating to Mapstruct from Dozer
 
 This Intellij plugin will help us to do the migration faster by generating mapstruct code for the dozer xml.
 
+## Steps to add this plugin to ur ide
+- It's available in jetbrains [market place](https://plugins.jetbrains.com/plugin/20853-dostruct/versions).
+- Compatible versions are 2022.2 and above only.
+
 ## How to Use The Plugin
 - Select the xml code.
 - press Ctrl + Shift + ` shortcut  and provide the details.
