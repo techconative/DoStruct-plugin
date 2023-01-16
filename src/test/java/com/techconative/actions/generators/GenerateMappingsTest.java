@@ -1,19 +1,20 @@
-package test;
+package com.techconative.actions.generators;
 
-import com.techconative.actions.generators.GenerateMappings;
+import junit.framework.TestResult;
 import org.junit.Assert;
 
 import javax.swing.text.BadLocationException;
 import java.io.IOException;
 
 
-public class Test {
-    public static void main(String[] args) throws IOException, BadLocationException {
-      Test test=new Test();
-      test.run();
+public class GenerateMappingsTest {
+    public static void main(String[] args) {
+        GenerateMappingsTest test = new GenerateMappingsTest();
+        test.run();
     }
-    void run() throws IOException, BadLocationException {
-        String xml= """
+
+    public TestResult run() {
+        String xml = """
                 <?xml version="1.0" encoding="UTF-8"?>
                 <mappings>
                     <mapping type="one-way" map-id="Custom_Map">
@@ -86,8 +87,13 @@ public class Test {
                 """;
 
         GenerateMappings.checkXml(xml);
-        String actual=GenerateMappings.generateMappings("C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\mappers",false,"className","mapper");
-        Assert.assertEquals(expected,actual);
+        String actual = null;
+        try {
+            actual = GenerateMappings.generateMappings("C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\mappers", false, "className", "mapper");
+        } catch (IOException | BadLocationException e) {
+            throw new RuntimeException(e);
+        }
+        Assert.assertEquals(expected, actual);
+        return null;
     }
-
 }

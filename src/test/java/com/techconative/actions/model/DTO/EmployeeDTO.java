@@ -1,4 +1,4 @@
-package model.DTO;
+package com.techconative.actions.model.DTO;
 
 
 public class EmployeeDTO {

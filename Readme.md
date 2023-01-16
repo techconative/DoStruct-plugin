@@ -2,11 +2,9 @@
 
 ## About
 
-When it comes to modernizing the applications, migrating to Mapstruct from Dozer mapper is a primary part for most of the Java enterprise applications that are running successfully for more than a decade.
+When it comes to modernizing the applications, migrating to Mapstruct from Dozer mapper is one of the primary part for most of the Java enterprise applications that are running successfully for more than a decade.
 
 This Intellij plugin will help us to do the migration faster by generating mapstruct code for the dozer xml.
-
-## Steps to add this plugin to ur ide
 
 ## How to Use The Plugin
 - Select the xml code.

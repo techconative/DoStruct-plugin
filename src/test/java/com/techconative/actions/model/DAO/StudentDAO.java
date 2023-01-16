@@ -1,11 +1,10 @@
-package model.DAO;
+package com.techconative.actions.model.DAO;
 
 
-public class EmployeeDAO {
+public class StudentDAO {
     private String name;
     private String description;
-    private int empNo;
-
+    private int age;
     public String getName() {
         return name;
     }
@@ -22,11 +21,11 @@ public class EmployeeDAO {
         this.description = description;
     }
 
-    public int getEmpNo() {
-        return empNo;
+    public int getAge() {
+        return age;
     }
 
-    public void setEmpNo(int empNo) {
-        this.empNo = empNo;
+    public void setAge(int age) {
+        this.age = age;
     }
 }
