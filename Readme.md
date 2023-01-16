@@ -12,7 +12,7 @@ This Intellij plugin will help us to do the migration faster by generating mapst
 - Select the xml code.
 - press Ctrl + Shift + ` shortcut  and provide the details.
 - Code will be generated at the specified location.
-- - Map-id at field levels are added.<br>
+- Map-id at field levels are added.<br>
 
 ![imageCheckBox](Documents/imageCheckBox.png "imageCheckBox")
 - Uncheck the checkBok to avoid writing and just view the generated code in pop up.
