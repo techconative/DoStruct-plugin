@@ -1,4 +1,4 @@
-package com.techconative.actions.model.DTO;
+package model.DTO;
 
 
 public class StudentDTO {

@@ -12,7 +12,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
-import com.techconative.actions.service.GenerateMappings;
+import com.techconative.actions.generators.GenerateMappings;
 import com.techconative.actions.utilities.Utilities;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +41,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
             return;
         }
         try {
-            if (GenerateMappings.CheckXml(selectedText)) {
+            if (GenerateMappings.checkXml(selectedText)) {
                 String code = null;
                 try {
                     code = GenerateMappings.generateMappings("path",
@@ -64,9 +64,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
                 List<VirtualFile> virtualFiles = Arrays.stream(ProjectRootManager.getInstance(e.getProject())
                         .getContentSourceRoots()).filter(
                         x -> (x.toNioPath().normalize().toString().replace(separator, ".")
-                                .replace(separator + separator, ".")
-                                .replace("/", ".").replace("\\", ".")
-                                .replace("..", ".").contains("src.main.java"))
+                                .contains("src.main.java"))
                 ).collect(Collectors.toList());
                 fileChooserDescriptor.setRoots(virtualFiles);
                 FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {

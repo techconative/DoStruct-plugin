@@ -1,4 +1,4 @@
-package com.techconative.actions.service;
+package com.techconative.actions.generators;
 
 import com.intellij.openapi.ui.Messages;
 import com.squareup.javapoet.*;
@@ -29,7 +29,7 @@ import java.util.stream.IntStream;
 
 public class GenerateMappings {
 
-    static private TypeSpec.Builder person;
+    static private TypeSpec.Builder builder;
     static private boolean alreadyExecuted = false;
     private static Document finalDocument;
     private static int length;
@@ -37,17 +37,17 @@ public class GenerateMappings {
 
     private static Integer initializeXmlDocumentBuilder(String selectedText) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder dBuilder = null;
+        DocumentBuilder documentBuilder = null;
         length = 0;
         try {
-            dBuilder = dbFactory.newDocumentBuilder();
+            documentBuilder = dbFactory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
             return -1;
         }
         finalDocument = null;
         try {
-            finalDocument = dBuilder.parse(new InputSource(new StringReader(selectedText)));
+            finalDocument = documentBuilder.parse(new InputSource(new StringReader(selectedText)));
         } catch (SAXException | IOException | NullPointerException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
             return -1;
@@ -56,7 +56,7 @@ public class GenerateMappings {
         return finalDocument.getElementsByTagName("mapping").getLength();
     }
 
-    public static boolean CheckXml(String selectedText) {
+    public static boolean checkXml(String selectedText) {
         length = initializeXmlDocumentBuilder(selectedText);
         if (length == 1 && finalDocument.getElementsByTagName("mappings").getLength() == 0) {
             alreadyExecuted = true;
@@ -76,7 +76,7 @@ public class GenerateMappings {
             return null;
         }
         Map<String, String> map = new HashMap<>();
-        person = null;
+        builder = null;
         AtomicBoolean partialMapping = new AtomicBoolean(false);
 
         if (length != finalDocument.getElementsByTagName("class-a").getLength() &&
@@ -190,7 +190,7 @@ public class GenerateMappings {
             return method.build().toString().replaceAll(map.get("packageB") + ".", "")
                     .replaceAll(map.get("packageA") + ".", "");
         } else {
-            person.addMethod(method.build());
+            builder.addMethod(method.build());
             return null;
         }
     }
@@ -209,7 +209,7 @@ public class GenerateMappings {
                     .build();
 
 
-            person = TypeSpec
+            builder = TypeSpec
                     .classBuilder(className)
                     .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                     .addAnnotation(Mapper.class)
@@ -220,7 +220,7 @@ public class GenerateMappings {
 
     static private String generateJavaClass(String path, boolean generate) throws IOException {
         String[] strings = getPath(path);
-        TypeSpec typeSpec = person.build();
+        TypeSpec typeSpec = builder.build();
 
         JavaFile javaFile = JavaFile.builder(strings[1], typeSpec).build();
 
