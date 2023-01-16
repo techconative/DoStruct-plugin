@@ -38,7 +38,7 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    DoStruct is a productivity tool that one can leverage at the time of migrating to Mapstruct in spring based application that's using legacy Dozer for mappings.
+    DoStruct is a code-generation tool that one can leverage at the time of migrating to Mapstruct in old enterprise application that's using legacy Dozer for mappings.
 
     DoStruct helps to solve the following steps in Dozer to mapstruct migration ,
     <ul>
@@ -56,9 +56,9 @@
 
     We'll be covering more cases of mapping in upcoming releases.
 
-    Feel free to contribute to the <a href="https://github.com/techconative/DoStruct-plugin">source code</a>
+    Feel free to contribute to the <a href="https://github.com/techconative/DoStruct-plugin">source code</a>.
 
-    <em>With love  from <a href="https://techconative.com/">TechConative</a> ❤️</em>
+    <em>With love  from <a href="https://techconative.com/">TechConative</a> ❤️</em>.
   ]]></description>
 
     <!-- Product and plugin compatibility requirements.
