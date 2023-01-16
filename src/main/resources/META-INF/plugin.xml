@@ -10,12 +10,12 @@
     <!-- A displayed Vendor name or Organization ID displayed on the Plugins Page. -->
     <vendor email="info@techconative.com" url="https://www.techconative.com">TechConative</vendor>
 
-    <version>0.0.3</version>
+    <version>0.0.4</version>
 
     <idea-version since-build="222" until-build="231.*"/>
 
     <change-notes>><![CDATA[
-   <b>How to Use The Plugin</b><br>
+   <b>Simple and easy steps to use the plugin</b><br>
 
       - Select the xml code.<br>
       - press Ctrl + Shift  + ` shortcut  and provide the details.<br>
@@ -24,7 +24,7 @@
       - Can just view generated code without writing.<br>
       - Can get code in pop up for already created class and append the missing part.<br>
       - you can go to action by pressing (⌘+Shift+A or Ctrl+Shift+A) and type plugin name
-      and change the shortcut yourself.<br><br>
+      and change the shortcut yourself.<br>
 
     <b>Newly added</b><br>
 
@@ -38,15 +38,9 @@
          Simple HTML elements (text formatting, paragraphs, and lists) can be added inside of <![CDATA[ ]]> tag.
          Guidelines: https://plugins.jetbrains.com/docs/marketplace/plugin-overview-page.html#plugin-description -->
     <description><![CDATA[
-    This is a productivity tool to be used when you're modernizing you're moving the mappings from Dozer to Mapstruct in your applications.
+    DoStruct is a productivity tool that one can leverage at the time of migrating to Mapstruct in spring based application that's using legacy Dozer for mappings.
 
-    With this plugin,
-    <ol>
-     <li>Select your <i>&lt;mapper&gt;</i>, <i>&lt;mappers&gt;</i> mapper definitions.</li>
-     <li>Press shortcut to generate equivalent Mapstruct definitions in seconds.</li>
-    </ol>
-
-    What this solves at the moment,
+    DoStruct helps to solve the following steps in Dozer to mapstruct migration ,
     <ul>
     <li>Straight forward mapping definitions with fields and ignore fields.</li>
     <li>MapId.</li>
@@ -62,7 +56,7 @@
 
     We'll be covering more cases of mapping in upcoming releases.
 
-    Feel free to contribute to the <a href="https://github.com/techconative/DoStruct-plugin/tree/bugFix">source code</a>
+    Feel free to contribute to the <a href="https://github.com/techconative/DoStruct-plugin">source code</a>
 
     <em>With love  from <a href="https://techconative.com/">TechConative</a> ❤️</em>
   ]]></description>
