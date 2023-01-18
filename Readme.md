@@ -18,7 +18,6 @@ This Intellij plugin will help us to do the migration faster by generating mapst
 
 ![imageCheckBox](Documents/imageCheckBox.png "imageCheckBox")
 - Uncheck the checkBok to avoid writing and just view the generated code in pop up.
-- If the shortcut is not working, go to action by pressing (`⌘+Shift+A` or `Ctrl+Shift+A`)  and change the shortcut by yourself.
 
 Alternate, 
 - Just right click on selected text click on *GenerateMapping*  which appears first on popup menu.<br>
