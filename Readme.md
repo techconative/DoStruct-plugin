@@ -20,7 +20,9 @@ This Intellij plugin will help us to do the migration faster by generating mapst
 - Uncheck the checkBok to avoid writing and just view the generated code in pop up.
 
 Alternate, 
-- Just right click on selected text click on *GenerateMapping*  which appears first on popup menu.<br>
+- Just right click on selected text click on *GenerateMapping*  which appears first on popup menu.
+
+- <br>
 
 ![menu](Documents/menu.png "menu")
 <br>
