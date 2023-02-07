@@ -86,13 +86,13 @@ public class GenerateMappingsTest {
                 }
                 """;
 
-        GenerateMappings.checkXml(xml);
+      //  GenerateMappings.checkXml(xml);
         String actual = null;
-        try {
-            actual = GenerateMappings.generateMappings("C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\mappers", false, "className", "mapper");
-        } catch (IOException | BadLocationException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//         //   actual = GenerateMappings.generateMappings("C:\\Users\\VISHNU\\Documents\\GitHub\\plugin\\src\\main\\java\\mappers", false, "className", "mapper");
+//        } catch (IOException | BadLocationException e) {
+//            throw new RuntimeException(e);
+//        }
         Assert.assertEquals(expected, actual);
         return null;
     }

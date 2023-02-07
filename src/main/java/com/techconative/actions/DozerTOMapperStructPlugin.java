@@ -15,10 +15,10 @@ import com.intellij.util.ui.JBUI;
 import com.techconative.actions.generators.GenerateMappings;
 import com.techconative.actions.utilities.Utilities;
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Document;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 
 
 public class DozerTOMapperStructPlugin extends AnAction {
+
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
 
@@ -41,10 +42,11 @@ public class DozerTOMapperStructPlugin extends AnAction {
             return;
         }
         try {
-            if (GenerateMappings.checkXml(selectedText)) {
+            Document finalDocument = GenerateMappings.getDocument(selectedText);
+            if (GenerateMappings.checkXml(finalDocument)) {
                 String code = null;
                 try {
-                    code = GenerateMappings.generateMappings("path",
+                    code = GenerateMappings.generateMappings(finalDocument,"path",
                             false, "className", "attributeName");
                 } catch (IOException | BadLocationException ex) {
                     return;
@@ -68,7 +70,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
                 ).collect(Collectors.toList());
                 fileChooserDescriptor.setRoots(virtualFiles);
                 FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
-                            JTextPanes(consumer.toNioPath().normalize().toString());
+                            JTextPanes(consumer.toNioPath().normalize().toString(),finalDocument);
                         }
                 );
             }
@@ -89,7 +91,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
         set = new SimpleAttributeSet();
         StyleConstants.setItalic(set, true);
         StyleConstants.setForeground(set, JBColor.BLUE);
-        Document doc = pane.getStyledDocument();
+        javax.swing.text.Document doc = pane.getStyledDocument();
         doc.insertString(doc.getLength(), "", set);
         set = new SimpleAttributeSet();
         doc.insertString(doc.getLength(), "", set);
@@ -102,7 +104,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
     }
 
-    void JTextPanes(String path) {
+    void JTextPanes(String path,Document finalDocument) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.setLayout(new GridBagLayout());
@@ -150,9 +152,9 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
         try {
             if (isSelected) {
-                GenerateMappings.generateMappings(path, true, className, attributeName);
+                GenerateMappings.generateMappings(finalDocument,path, true, className, attributeName);
             } else {
-                String code = GenerateMappings.generateMappings(path,
+                String code = GenerateMappings.generateMappings(finalDocument,path,
                         false, className, attributeName);
                 if (code != null){
                     getJTextPlane(code);

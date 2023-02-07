@@ -29,55 +29,50 @@ import java.util.stream.IntStream;
 
 public class GenerateMappings {
 
-    static private TypeSpec.Builder builder;
-    static private boolean alreadyExecuted = false;
-    private static Document finalDocument;
-    private static int length;
-
-
-    private static Integer initializeXmlDocumentBuilder(String selectedText) {
+    private static Document initializeXmlDocumentBuilder(String selectedText) {
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = null;
-        length = 0;
+
         try {
             documentBuilder = dbFactory.newDocumentBuilder();
         } catch (ParserConfigurationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
-            return -1;
+            throw new RuntimeException(ex);
+            // return -1;
         }
-        finalDocument = null;
+        Document finalDocument = null;
         try {
             finalDocument = documentBuilder.parse(new InputSource(new StringReader(selectedText)));
         } catch (SAXException | IOException | NullPointerException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
-            return -1;
+            throw new RuntimeException(ex);
+            //  return -1;
         }
         finalDocument.getDocumentElement().normalize();
-        return finalDocument.getElementsByTagName("mapping").getLength();
+        return finalDocument;
     }
 
-    public static boolean checkXml(String selectedText) {
-        length = initializeXmlDocumentBuilder(selectedText);
-        if (length == 1 && finalDocument.getElementsByTagName("mappings").getLength() == 0) {
-            alreadyExecuted = true;
-            return true;
-        }else if (length == -1){
-            throw new RuntimeException();
-        }
-        else {
-            alreadyExecuted = false;
-            return false;
-        }
+    public static Document getDocument(String selectedText) {
+        return initializeXmlDocumentBuilder(selectedText);
     }
 
-    public static String generateMappings(String path, boolean generate,
+    public static boolean checkXml(Document finalDocument) {
+        int length = finalDocument.getElementsByTagName("mapping").getLength();
+
+        return length == 1 && finalDocument.getElementsByTagName("mappings").getLength() == 0;
+    }
+
+    public static String generateMappings(Document finalDocument, String path, boolean generate,
                                           String className, String mapperName) throws IOException, BadLocationException {
-        if (length == 0) {
-            return null;
-        }
+
         Map<String, String> map = new HashMap<>();
-        builder = null;
         AtomicBoolean partialMapping = new AtomicBoolean(false);
+        AtomicBoolean alreadyExecuted = new AtomicBoolean(false);
+        int length = finalDocument.getElementsByTagName("mapping").getLength();
+
+        var builder = new Object() {
+            TypeSpec.Builder builder = null;
+        };
 
         if (length != finalDocument.getElementsByTagName("class-a").getLength() &&
                 length != finalDocument.getElementsByTagName("class-b").getLength()) {
@@ -94,42 +89,44 @@ public class GenerateMappings {
                     .mapToObj(nodeList::item)
                     .forEach(y -> {
 
-                        switch (y.getNodeName()) {
-                            case "class-a" -> {
-                                map.put("ClassAName", getClassName(y.getTextContent()));
-                                map.put("packageA", getPackage(y.getTextContent()));
-                            }
-                            case "class-b" -> {
-                                map.put("ClassBName", getClassName(y.getTextContent()));
-                                map.put("packageB", getPackage(y.getTextContent()));
-                            }
-                            case "field" -> {
-                                Element element = (Element) y;
-                                AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
-                                annotationSpec.addMember("source", "$S",
-                                        element.getElementsByTagName("a")
-                                                .item(0).getTextContent()).addMember("target", "$S",
-                                        element.getElementsByTagName("b").item(0).getTextContent());
-                                if (y.getAttributes().getNamedItem("map-id") != null) {
-                                    annotationSpec.addMember("qualifiedByName","$S",
-                                            Utilities.findAndApply(y.getAttributes().getNamedItem("map-id")
-                                                    .getTextContent()));
+                                switch (y.getNodeName()) {
+                                    case "class-a" -> {
+                                        map.put("ClassAName", getClassName(y.getTextContent()));
+                                        map.put("packageA", getPackage(y.getTextContent()));
+                                    }
+                                    case "class-b" -> {
+                                        map.put("ClassBName", getClassName(y.getTextContent()));
+                                        map.put("packageB", getPackage(y.getTextContent()));
+                                    }
+                                    case "field" -> {
+                                        Element element = (Element) y;
+                                        AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
+                                        annotationSpec.addMember("source", "$S",
+                                                element.getElementsByTagName("a")
+                                                        .item(0).getTextContent()).addMember("target", "$S",
+                                                element.getElementsByTagName("b").item(0).getTextContent());
+                                        if (y.getAttributes().getNamedItem("map-id") != null) {
+                                            annotationSpec.addMember("qualifiedByName", "$S",
+                                                    Utilities.findAndApply(y.getAttributes().getNamedItem("map-id")
+                                                            .getTextContent()));
+                                        }
+                                        annotationSpecList.add(annotationSpec.build());
+                                    }
+                                    case "field-exclude" -> {
+                                        Element element = (Element) y;
+                                        AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
+                                        annotationSpec.addMember("target", "$S",
+                                                element.getElementsByTagName("b").item(0)
+                                                        .getTextContent()).addMember("ignore", "true");
+                                        annotationSpecList.add(annotationSpec.build());
+                                    }
                                 }
-                                annotationSpecList.add(annotationSpec.build());
-                            }
-                            case "field-exclude" -> {
-                                Element element = (Element) y;
-                                AnnotationSpec.Builder annotationSpec = AnnotationSpec.builder(Mapping.class);
-                                annotationSpec.addMember("target", "$S",
-                                        element.getElementsByTagName("b").item(0)
-                                                .getTextContent()).addMember("ignore", "true");
-                                annotationSpecList.add(annotationSpec.build());
-                            }
-                        }
                             }
                     );
-
-            buildJavaClass(path, map, className, mapperName);
+            if (!alreadyExecuted.get()) {
+                builder.builder = buildJavaClass(path, map, className, mapperName);
+                alreadyExecuted.set(true);
+            }
             if (finalDocument.getElementsByTagName("mapping").item(x).getAttributes().getNamedItem("map-id") != null) {
                 String mapId = finalDocument.getElementsByTagName("mapping").item(x).getAttributes()
                         .getNamedItem("map-id").getTextContent();
@@ -137,21 +134,20 @@ public class GenerateMappings {
             }
             if (finalDocument.getElementsByTagName("mappings").getLength() == 0 && length >= 1 && !generate) {
                 try {
-                    DozerTOMapperStructPlugin.getJTextPlane(generateMethod(map, annotationSpecList, true)
+                    DozerTOMapperStructPlugin.getJTextPlane(generateMethod(map, annotationSpecList, true, builder.builder)
                             .replaceAll("@org.mapstruct.", "@"));
                     partialMapping.set(true);
                 } catch (BadLocationException e) {
                     throw new RuntimeException(e);
                 }
             } else {
-                generateMethod(map, annotationSpecList, false);
+                generateMethod(map, annotationSpecList, false, builder.builder);
             }
         });
         if (partialMapping.get()) {
-            alreadyExecuted = false;
             return null;
         } else {
-            return generateJavaClass(path, generate);
+            return generateJavaClass(path, generate, builder.builder);
         }
     }
 
@@ -166,7 +162,8 @@ public class GenerateMappings {
         return strings[strings.length - 1];
     }
 
-    static String generateMethod(Map<String, String> map, List<AnnotationSpec> annotationSpecList, boolean partialMapping) {
+    static String generateMethod(Map<String, String> map, List<AnnotationSpec> annotationSpecList,
+                                 boolean partialMapping, TypeSpec.Builder builder) {
 
         ClassName classTypeB = ClassName.get(map.get("packageB"), map.get("ClassBName"));
         ClassName classTypeA = ClassName.get(map.get("packageA"), map.get("ClassAName"));
@@ -195,30 +192,31 @@ public class GenerateMappings {
         }
     }
 
-    static private void buildJavaClass(String path, Map<String, String> map, String className, String mapperName) {
-        if (!alreadyExecuted) {
-            if (className.equals("className") || className.isBlank() || className.isEmpty()) {
-                className = map.get("ClassAName") + map.get("ClassBName");
-            }
-            String[] strings = getPath(path);
-            ClassName ClassTitle = ClassName.get(strings[1], className);
-            ClassName Mappers = ClassName.get("org.mapstruct.factory", "Mappers");
-            FieldSpec fieldSpec = FieldSpec.builder(ClassTitle, mapperName)
-                    .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
-                    .initializer("$T.getMapper($T.class)", Mappers, ClassTitle)
-                    .build();
+    static private TypeSpec.Builder buildJavaClass(String path, Map<String, String> map, String className, String mapperName) {
 
-
-            builder = TypeSpec
-                    .classBuilder(className)
-                    .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
-                    .addAnnotation(Mapper.class)
-                    .addField(fieldSpec);
-            alreadyExecuted = true;
+        if (className.equals("className") || className.isBlank() || className.isEmpty()) {
+            className = map.get("ClassAName") + map.get("ClassBName");
         }
+        String[] strings = getPath(path);
+        ClassName ClassTitle = ClassName.get(strings[1], className);
+        ClassName Mappers = ClassName.get("org.mapstruct.factory", "Mappers");
+        FieldSpec fieldSpec = FieldSpec.builder(ClassTitle, mapperName)
+                .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
+                .initializer("$T.getMapper($T.class)", Mappers, ClassTitle)
+                .build();
+
+
+        TypeSpec.Builder builder = TypeSpec
+                .classBuilder(className)
+                .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
+                .addAnnotation(Mapper.class)
+                .addField(fieldSpec);
+
+        return builder;
+
     }
 
-    static private String generateJavaClass(String path, boolean generate) throws IOException {
+    static private String generateJavaClass(String path, boolean generate, TypeSpec.Builder builder) throws IOException {
         String[] strings = getPath(path);
         TypeSpec typeSpec = builder.build();
 
@@ -228,7 +226,7 @@ public class GenerateMappings {
             write(javaFile, strings[0]);
         }
         String code = String.valueOf(javaFile);
-        alreadyExecuted = false;
+        //alreadyExecuted = false;
         return code;
     }
 
