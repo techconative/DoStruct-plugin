@@ -4,6 +4,7 @@ import com.intellij.openapi.ui.Messages;
 import com.squareup.javapoet.*;
 import com.techconative.actions.DozerTOMapperStructPlugin;
 import com.techconative.actions.utilities.Utilities;
+import org.apache.commons.collections.CollectionUtils;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -38,7 +39,6 @@ public class GenerateMappings {
         } catch (ParserConfigurationException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
             throw new RuntimeException(ex);
-            // return -1;
         }
         Document finalDocument = null;
         try {
@@ -46,7 +46,6 @@ public class GenerateMappings {
         } catch (SAXException | IOException | NullPointerException ex) {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
             throw new RuntimeException(ex);
-            //  return -1;
         }
         finalDocument.getDocumentElement().normalize();
         return finalDocument;
@@ -58,8 +57,7 @@ public class GenerateMappings {
 
     public static boolean checkXml(Document finalDocument) {
         int length = finalDocument.getElementsByTagName("mapping").getLength();
-
-        return length == 1 && finalDocument.getElementsByTagName("mappings").getLength() == 0;
+        return length == 1;
     }
 
     public static String generateMappings(Document finalDocument, String path, boolean generate,
@@ -123,7 +121,7 @@ public class GenerateMappings {
                                 }
                             }
                     );
-            if (!alreadyExecuted.get()) {
+            if (!alreadyExecuted.get() && path != null) {
                 builder.builder = buildJavaClass(path, map, className, mapperName);
                 alreadyExecuted.set(true);
             }
@@ -133,19 +131,17 @@ public class GenerateMappings {
                 map.put("methodMapId", mapId);
             }
             if (finalDocument.getElementsByTagName("mappings").getLength() == 0 && length >= 1 && !generate) {
-                try {
-                    DozerTOMapperStructPlugin.getJTextPlane(generateMethod(map, annotationSpecList, true, builder.builder)
-                            .replaceAll("@org.mapstruct.", "@"));
-                    partialMapping.set(true);
-                } catch (BadLocationException e) {
-                    throw new RuntimeException(e);
-                }
+                String code = generateMethod(map, annotationSpecList, true, builder.builder)
+                        .replaceAll("@org.mapstruct.", "@");
+                map.put("code", code);
+                partialMapping.set(true);
+
             } else {
                 generateMethod(map, annotationSpecList, false, builder.builder);
             }
         });
         if (partialMapping.get()) {
-            return null;
+            return map.get("code");
         } else {
             return generateJavaClass(path, generate, builder.builder);
         }
@@ -206,13 +202,11 @@ public class GenerateMappings {
                 .build();
 
 
-        TypeSpec.Builder builder = TypeSpec
+        return TypeSpec
                 .classBuilder(className)
                 .addModifiers(Modifier.PUBLIC, Modifier.ABSTRACT)
                 .addAnnotation(Mapper.class)
                 .addField(fieldSpec);
-
-        return builder;
 
     }
 
@@ -226,7 +220,6 @@ public class GenerateMappings {
             write(javaFile, strings[0]);
         }
         String code = String.valueOf(javaFile);
-        //alreadyExecuted = false;
         return code;
     }
 

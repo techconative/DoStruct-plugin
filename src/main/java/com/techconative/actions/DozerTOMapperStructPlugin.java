@@ -43,10 +43,11 @@ public class DozerTOMapperStructPlugin extends AnAction {
         }
         try {
             Document finalDocument = GenerateMappings.getDocument(selectedText);
+
             if (GenerateMappings.checkXml(finalDocument)) {
                 String code = null;
                 try {
-                    code = GenerateMappings.generateMappings(finalDocument,"path",
+                    code = GenerateMappings.generateMappings(finalDocument, null,
                             false, "className", "attributeName");
                 } catch (IOException | BadLocationException ex) {
                     return;
@@ -70,11 +71,11 @@ public class DozerTOMapperStructPlugin extends AnAction {
                 ).collect(Collectors.toList());
                 fileChooserDescriptor.setRoots(virtualFiles);
                 FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
-                            JTextPanes(consumer.toNioPath().normalize().toString(),finalDocument);
+                            JTextPanes(consumer.toNioPath().normalize().toString(), finalDocument);
                         }
                 );
             }
-        }catch (RuntimeException ex){
+        } catch (RuntimeException ex) {
             return;
         }
     }
@@ -104,7 +105,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
     }
 
-    void JTextPanes(String path,Document finalDocument) {
+    void JTextPanes(String path, Document finalDocument) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         panel.setLayout(new GridBagLayout());
@@ -152,11 +153,11 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
         try {
             if (isSelected) {
-                GenerateMappings.generateMappings(finalDocument,path, true, className, attributeName);
+                GenerateMappings.generateMappings(finalDocument, path, true, className, attributeName);
             } else {
-                String code = GenerateMappings.generateMappings(finalDocument,path,
+                String code = GenerateMappings.generateMappings(finalDocument, path,
                         false, className, attributeName);
-                if (code != null){
+                if (code != null) {
                     getJTextPlane(code);
                 }
             }
