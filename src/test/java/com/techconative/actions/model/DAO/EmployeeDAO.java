@@ -1,6 +1,5 @@
 package com.techconative.actions.model.DAO;
 
-
 public class EmployeeDAO {
     private String name;
     private String description;

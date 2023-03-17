@@ -1,11 +1,9 @@
 package com.techconative.actions.generators;
 
+import java.io.IOException;
+import javax.swing.text.BadLocationException;
 import org.junit.Assert;
 import org.w3c.dom.Document;
-
-import javax.swing.text.BadLocationException;
-import java.io.IOException;
-
 
 public class GenerateMappingsTest {
     public static void main(String[] args) throws IOException, BadLocationException {
@@ -14,7 +12,8 @@ public class GenerateMappingsTest {
     }
 
     public void run() throws IOException, BadLocationException {
-        String xml = """
+        String xml =
+                """
                 <mapping type="one-way" map-id="Custom_Map">
                     <class-a>com.techconative.actions.model.DAO.EmployeeDAO</class-a>
                     <class-b>com.techconative.actions.model.DTO.EmployeeDTO</class-b>
@@ -31,7 +30,8 @@ public class GenerateMappingsTest {
                         <b>empNumber</b>
                     </field-exclude>
                 </mapping>""";
-        String expected = """
+        String expected =
+                """
                 @Mappings({
                     @Mapping(source = "name", target = "empName", qualifiedByName = "referenceMethod"),
                     @Mapping(source = "description", target = "empDescription"),
@@ -42,8 +42,7 @@ public class GenerateMappingsTest {
                                 """;
 
         Document finalDocument = GenerateMappings.getDocument(xml);
-        String actual = GenerateMappings.generateMappings(finalDocument,
-                null, false, "className", "attributeName");
+        String actual = GenerateMappings.generateMappings(finalDocument, null, false, "className", "attributeName");
         System.out.println(actual);
         Assert.assertEquals(expected, actual);
     }

@@ -1,10 +1,10 @@
 package com.techconative.actions.model.DAO;
 
-
 public class StudentDAO {
     private String name;
     private String description;
     private int age;
+
     public String getName() {
         return name;
     }

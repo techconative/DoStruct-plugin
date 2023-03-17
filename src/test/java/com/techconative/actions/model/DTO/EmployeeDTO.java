@@ -1,10 +1,10 @@
 package com.techconative.actions.model.DTO;
 
-
 public class EmployeeDTO {
     private String empName;
     private String empDescription;
     private int empNumber;
+
     public String getEmpName() {
         return empName;
     }

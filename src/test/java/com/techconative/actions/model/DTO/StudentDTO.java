@@ -1,6 +1,5 @@
 package com.techconative.actions.model.DTO;
 
-
 public class StudentDTO {
     private String studentName;
     private String studentDescription;

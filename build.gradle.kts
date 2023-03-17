@@ -1,6 +1,7 @@
 plugins {
   id("java")
   id("org.jetbrains.intellij") version "1.11.0"
+  id("com.diffplug.spotless") version "6.17.0"
   application
 }
 
@@ -14,6 +15,7 @@ version = "0.0.4"
 repositories {
   mavenCentral()
   mavenLocal()
+  google()
 }
 
 dependencies{
@@ -25,6 +27,7 @@ dependencies{
   implementation("org.mapstruct:mapstruct:1.5.3.Final")
 // https://mvnrepository.com/artifact/org.mapstruct/mapstruct-processor
   implementation("org.mapstruct:mapstruct-processor:1.5.3.Final")
+
 }
 
 
@@ -45,37 +48,49 @@ tasks {
   }
 }
 
-configurations.all {
-  resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.DEPENDENCY_FIRST)
+spotless {
+  java {
+    googleJavaFormat()
+    removeUnusedImports()
+    toggleOffOn()
+    palantirJavaFormat()
+    trimTrailingWhitespace()
+    endWithNewline()
+  }
 }
+
+  configurations.all {
+    resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.DEPENDENCY_FIRST)
+  }
 
 // Configure Gradle IntelliJ Plugin
 // Read more: https://plugins.jetbrains.com/docs/intellij/tools-gradle-intellij-plugin.html
-intellij {
-  version.set("2022.3.1")
-  type.set("IC") // Target IDE Platform
-  plugins.set(listOf("com.intellij.java"))
-}
-
-tasks {
-  // Set the JVM compatibility versions
-  withType<JavaCompile> {
-    sourceCompatibility = "17"
-    targetCompatibility = "17"
+  intellij {
+    version.set("2022.3.1")
+    type.set("IC") // Target IDE Platform
+    plugins.set(listOf("com.intellij.java"))
   }
 
-  patchPluginXml {
-    sinceBuild.set("222")
-    untilBuild.set("231.*")
+  tasks {
+    // Set the JVM compatibility versions
+    withType<JavaCompile> {
+      sourceCompatibility = "17"
+      targetCompatibility = "17"
+    }
+
+    patchPluginXml {
+      sinceBuild.set("222")
+      untilBuild.set("231.*")
+    }
+
+    signPlugin {
+      certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
+      privateKey.set(System.getenv("PRIVATE_KEY"))
+      password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
+    }
+
+    publishPlugin {
+      token.set(System.getenv("PUBLISH_TOKEN"))
+    }
   }
 
-  signPlugin {
-    certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
-    privateKey.set(System.getenv("PRIVATE_KEY"))
-    password.set(System.getenv("PRIVATE_KEY_PASSWORD"))
-  }
-
-  publishPlugin {
-    token.set(System.getenv("PUBLISH_TOKEN"))
-  }
-}
