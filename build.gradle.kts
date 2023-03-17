@@ -15,7 +15,6 @@ version = "0.0.4"
 repositories {
   mavenCentral()
   mavenLocal()
-  google()
 }
 
 dependencies{
@@ -52,7 +51,6 @@ spotless {
   java {
     googleJavaFormat()
     removeUnusedImports()
-    toggleOffOn()
     palantirJavaFormat()
     trimTrailingWhitespace()
     endWithNewline()
