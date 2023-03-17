@@ -47,16 +47,6 @@ tasks {
   }
 }
 
-spotless {
-  java {
-    googleJavaFormat()
-    removeUnusedImports()
-    palantirJavaFormat()
-    trimTrailingWhitespace()
-    endWithNewline()
-  }
-}
-
   configurations.all {
     resolutionStrategy.sortArtifacts(ResolutionStrategy.SortOrder.DEPENDENCY_FIRST)
   }
@@ -89,6 +79,16 @@ spotless {
 
     publishPlugin {
       token.set(System.getenv("PUBLISH_TOKEN"))
+    }
+
+    spotless {
+      java {
+        googleJavaFormat()
+        removeUnusedImports()
+        palantirJavaFormat()
+        trimTrailingWhitespace()
+        endWithNewline()
+      }
     }
   }
 
