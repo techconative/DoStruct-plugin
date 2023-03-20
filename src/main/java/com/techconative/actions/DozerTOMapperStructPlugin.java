@@ -14,13 +14,6 @@ import com.intellij.ui.JBColor;
 import com.intellij.util.ui.JBUI;
 import com.techconative.actions.generators.GenerateMappings;
 import com.techconative.actions.utilities.Utilities;
-import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Document;
-
-import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
 import java.awt.*;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -28,7 +21,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
+import javax.swing.*;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Document;
 
 public class DozerTOMapperStructPlugin extends AnAction {
 
@@ -47,8 +45,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
             if (GenerateMappings.checkXml(finalDocument)) {
                 String code = null;
                 try {
-                    code = GenerateMappings.generateMappings(finalDocument, null,
-                            false, "className", "attributeName");
+                    code = GenerateMappings.generateMappings(finalDocument, null, false, "className", "attributeName");
                 } catch (IOException | BadLocationException ex) {
                     return;
                 }
@@ -61,19 +58,20 @@ public class DozerTOMapperStructPlugin extends AnAction {
                 }
             } else {
                 FileChooserDescriptor fileChooserDescriptor =
-                        new FileChooserDescriptor(false, true, false,
-                                false, false, false);
+                        new FileChooserDescriptor(false, true, false, false, false, false);
                 String separator = FileSystems.getDefault().getSeparator();
-                List<VirtualFile> virtualFiles = Arrays.stream(ProjectRootManager.getInstance(e.getProject())
-                        .getContentSourceRoots()).filter(
-                        x -> (x.toNioPath().normalize().toString().replace(separator, ".")
-                                .contains("src.main.java"))
-                ).collect(Collectors.toList());
+                List<VirtualFile> virtualFiles = Arrays.stream(
+                                ProjectRootManager.getInstance(e.getProject()).getContentSourceRoots())
+                        .filter(x -> (x.toNioPath()
+                                .normalize()
+                                .toString()
+                                .replace(separator, ".")
+                                .contains("src.main.java")))
+                        .collect(Collectors.toList());
                 fileChooserDescriptor.setRoots(virtualFiles);
                 FileChooser.chooseFile(fileChooserDescriptor, e.getProject(), null, consumer -> {
-                            JTextPanes(consumer.toNioPath().normalize().toString(), finalDocument);
-                        }
-                );
+                    JTextPanes(consumer.toNioPath().normalize().toString(), finalDocument);
+                });
             }
         } catch (RuntimeException ex) {
             return;
@@ -102,7 +100,6 @@ public class DozerTOMapperStructPlugin extends AnAction {
         frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-
     }
 
     void JTextPanes(String path, Document finalDocument) {
@@ -112,7 +109,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
 
         GridBagConstraints constraints = new GridBagConstraints();
         constraints.anchor = GridBagConstraints.WEST;
-        constraints.insets = JBUI.insets(5);//new Insets(10, 10, 10, 10)
+        constraints.insets = JBUI.insets(5); // new Insets(10, 10, 10, 10)
 
         constraints.gridx = 0;
         constraints.gridy = 0;
@@ -145,8 +142,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
         JLabel label3 = new JLabel(path);
         panel.add(label3, constraints);
 
-        JOptionPane.showConfirmDialog(null, panel, "Input Dialog",
-                JOptionPane.OK_CANCEL_OPTION);
+        JOptionPane.showConfirmDialog(null, panel, "Input Dialog", JOptionPane.OK_CANCEL_OPTION);
         String className = Objects.requireNonNullElse(textField.getText(), "ClassName");
         boolean isSelected = checkBox.isSelected();
         String attributeName = Utilities.GetVariableNameFromClassName(className);
@@ -155,8 +151,7 @@ public class DozerTOMapperStructPlugin extends AnAction {
             if (isSelected) {
                 GenerateMappings.generateMappings(finalDocument, path, true, className, attributeName);
             } else {
-                String code = GenerateMappings.generateMappings(finalDocument, path,
-                        false, className, attributeName);
+                String code = GenerateMappings.generateMappings(finalDocument, path, false, className, attributeName);
                 if (code != null) {
                     getJTextPlane(code);
                 }
@@ -165,8 +160,5 @@ public class DozerTOMapperStructPlugin extends AnAction {
             Messages.showMessageDialog(String.valueOf(ex), "ERROR", Messages.getErrorIcon());
             return;
         }
-
     }
-
-
 }
