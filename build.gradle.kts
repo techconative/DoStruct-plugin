@@ -66,11 +66,6 @@ tasks {
       targetCompatibility = "17"
     }
 
-    patchPluginXml {
-      sinceBuild.set("222")
-      untilBuild.set("241.*")
-    }
-
     signPlugin {
       certificateChain.set(System.getenv("CERTIFICATE_CHAIN"))
       privateKey.set(System.getenv("PRIVATE_KEY"))
